@@ -13,4 +13,8 @@ public class Colis {
     private PrioriteStatus prioriteStatus;
     private  String villeDestination;
     private Date dateCreation;
+    private ClientExpediteur clientExpediteur;
+    private Destinataire destinataire;
+    private Livreur livreur;
+    private Zone zone;
 }
