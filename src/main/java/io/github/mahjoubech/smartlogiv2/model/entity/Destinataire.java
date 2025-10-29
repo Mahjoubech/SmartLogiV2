@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Entity
 @Data
 @Table(name = "destinataire")
@@ -24,4 +26,6 @@ public class Destinataire {
     private String telephone;
     @Column(name = "adresse", nullable = false)
     private  String adresse;
+     @OneToMany(mappedBy = "destinataire")
+     private Set<Colis> colis;
 }

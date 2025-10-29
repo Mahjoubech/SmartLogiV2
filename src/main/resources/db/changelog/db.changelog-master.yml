@@ -84,7 +84,6 @@ databaseChangeLog:
               - column: {name: commentaire, type: TEXT}
               - column: { name: date_creation, type: TIMESTAMP WITHOUT TIME ZONE, constraints: { nullable: false } }
 
-
         - createTable:
             tableName: colis_produit
             columns:
@@ -95,8 +94,76 @@ databaseChangeLog:
               - column: {name: date_ajout, type: TIMESTAMP WITHOUT TIME ZONE}
               - column: { name: date_creation, type: TIMESTAMP WITHOUT TIME ZONE, constraints: { nullable: false } }
 
-        # - changeSet:
-        #     id: 20251028-02-add-foreign-keys
-        #     author: smartlogi
-        #     changes:
-        #       # 9. Foreign Keys... (غادي تزيدهم هنا)
+  - changeSet:
+      id: 20251028-02-add-foreign-keys
+      author: Mahjoubech
+      changes:
+
+        - addForeignKeyConstraint:
+            baseColumnNames: zone_assignee_id
+            baseTableName: livreur
+            constraintName: fk_livreur_zone
+            onDelete: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: zone
+
+        - addForeignKeyConstraint:
+            baseColumnNames: client_expediteur_id
+            baseTableName: colis
+            constraintName: fk_colis_client_expediteur
+            onDelete: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: client_expediteur
+
+        - addForeignKeyConstraint:
+            baseColumnNames: destinataire_id
+            baseTableName: colis
+            constraintName: fk_colis_destinataire
+            onDelete: RESTRICT # منع حذف Destinataire
+            referencedColumnNames: id
+            referencedTableName: destinataire
+
+        - addForeignKeyConstraint:
+            baseColumnNames: zone_id
+            baseTableName: colis
+            constraintName: fk_colis_zone
+            onDelete: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: zone
+
+        - addForeignKeyConstraint:
+            baseColumnNames: livreur_id
+            baseTableName: colis
+            constraintName: fk_colis_livreur
+            onDelete: SET NULL
+            referencedColumnNames: id
+            referencedTableName: livreur
+
+        - addForeignKeyConstraint:
+            baseColumnNames: colis_id
+            baseTableName: historique_livraison
+            constraintName: fk_historique_colis
+            onDelete: CASCADE
+            referencedColumnNames: id
+            referencedTableName: colis
+
+        - addForeignKeyConstraint:
+            baseColumnNames: colis_id
+            baseTableName: colis_produit
+            constraintName: fk_colisproduit_colis
+            onDelete: CASCADE
+            referencedColumnNames: id
+            referencedTableName: colis
+
+        - addForeignKeyConstraint:
+            baseColumnNames: produit_id
+            baseTableName: colis_produit
+            constraintName: fk_colisproduit_produit
+            onDelete: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: produit
+
+        - addUniqueConstraint:
+            columnNames: colis_id, produit_id
+            constraintName: uc_colis_produit
+            tableName: colis_produit

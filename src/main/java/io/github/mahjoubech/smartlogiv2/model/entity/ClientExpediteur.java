@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Entity
 @Data
 @Table(name = "client_expediteur")
@@ -24,5 +26,6 @@ public class ClientExpediteur {
     private String telephone ;
     @Column(name = "adresse", nullable = false)
     private String adresse ;
-
+     @OneToMany(mappedBy = "clientExpediteur")
+     private Set<Colis> colis;
 }

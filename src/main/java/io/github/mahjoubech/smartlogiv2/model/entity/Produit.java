@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
 @Data
@@ -24,4 +25,6 @@ public class Produit {
     private Double poids;
     @Column(name = "prix", nullable = false)
     private BigDecimal prix;
+    @OneToMany(mappedBy = "produit")
+    private Set<ColisProduit> colis;
 }

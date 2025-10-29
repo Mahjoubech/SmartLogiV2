@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Entity
 @Data
 @Table(name = "livreur")
@@ -22,6 +24,9 @@ public class Livreur {
     private String telephone;
     @Column(name = "vehicule")
     private String vehicule;
-    @Column(name = "zone_assigned")
-    private String zoneAssigned;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "zone_id")
+    private Zone zoneAssigned;
+    @OneToMany(mappedBy = "livreur", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Colis> colisList;
 }

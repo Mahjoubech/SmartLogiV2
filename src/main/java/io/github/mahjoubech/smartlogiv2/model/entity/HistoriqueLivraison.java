@@ -17,6 +17,7 @@ public class HistoriqueLivraison {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private  String id;
+
     private  Colis colis;
     @Enumerated(EnumType.STRING)
     private ColisStatus status;

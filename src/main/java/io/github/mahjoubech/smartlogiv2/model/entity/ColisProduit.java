@@ -17,8 +17,13 @@ import java.time.ZonedDateTime;
 public class ColisProduit {
     @EmbeddedId
     private ColisProduitId colisProduitId;
-
+    @MapsId("colisId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "colis_id", nullable = false)
     private Colis colis;
+    @MapsId("produitId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "produit_id", nullable = false)
     private Produit produit;
     @Column(name = "quantite", nullable = false)
     private Integer quantite;

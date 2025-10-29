@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Data
@@ -30,8 +31,21 @@ public class Colis {
     private  String villeDestination;
     @Column(name = "date_creation", nullable = false)
     private Date dateCreation;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_expediteur_id", nullable = false)
     private ClientExpediteur clientExpediteur;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "destinataire_id", nullable = false)
     private Destinataire destinataire;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "livreur_id")
     private Livreur livreur;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "zone_id", nullable = false)
     private Zone zone;
+    @OneToMany(mappedBy = "colis", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<HistoriqueLivraison> historique;
+
+    @OneToMany(mappedBy = "colis", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ColisProduit> produits;
 }
