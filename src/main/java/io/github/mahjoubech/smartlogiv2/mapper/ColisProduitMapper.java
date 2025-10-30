@@ -10,10 +10,10 @@ import org.mapstruct.Mapping;
 public interface ColisProduitMapper {
     @Mapping(target = "colis", ignore = true)
     @Mapping(target = "produit", ignore = true)
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "colisProduitId", ignore = true)
     ColisProduit toEntity(ColisProduitRequest dto);
 
-    @Mapping(target = "colisId", source = "colis.id")
+    @Mapping(target = "colisId", source = "colisProduitId")
     @Mapping(target = "produit", source = "produit")
     ColisProduitResponse toResponse(ColisProduit entity);
 }

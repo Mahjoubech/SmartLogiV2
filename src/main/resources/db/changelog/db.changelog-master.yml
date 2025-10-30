@@ -3,167 +3,344 @@ databaseChangeLog:
       id: 20251028-01-entities-base
       author: Mahjoubech
       changes:
-
         - createTable:
             tableName: zone
             columns:
-              - column: {name: id, type: VARCHAR(50), constraints: {primaryKey: true, nullable: false}}
-              - column: {name: nom, type: VARCHAR(255), constraints: {nullable: false, unique: true}}
-              - column: {name: code_postal, type: VARCHAR(10), constraints: {nullable: false}}
-              - column: {name: date_creation, type: TIMESTAMP WITHOUT TIME ZONE, constraints: {nullable: false}}
-
+              - column:
+                  name: id
+                  type: VARCHAR(50)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nom
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: code_postal
+                  type: VARCHAR(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_creation
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  constraints:
+                    nullable: false
 
         - createTable:
             tableName: client_expediteur
             columns:
-              - column: {name: id, type: VARCHAR(50), constraints: {primaryKey: true, nullable: false}}
-              - column: {name: nom, type: VARCHAR(100)}
-              - column: {name: prenom, type: VARCHAR(100)}
-              - column: {name: email, type: VARCHAR(255), constraints: {nullable: false, unique: true}}
-              - column: {name: telephone, type: VARCHAR(20)}
-              - column: {name: adresse, type: VARCHAR(255)}
-              - column: { name: date_creation, type: TIMESTAMP WITHOUT TIME ZONE, constraints: { nullable: false } }
-
+              - column:
+                  name: id
+                  type: VARCHAR(50)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nom
+                  type: VARCHAR(100)
+              - column:
+                  name: prenom
+                  type: VARCHAR(100)
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: telephone
+                  type: VARCHAR(20)
+                  constraints:
+                    unique: true
+              - column:
+                  name: adresse
+                  type: VARCHAR(255)
+              - column:
+                  name: date_creation
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  constraints:
+                    nullable: false
 
         - createTable:
             tableName: destinataire
             columns:
-              - column: {name: id, type: VARCHAR(50), constraints: {primaryKey: true, nullable: false}}
-              - column: {name: nom, type: VARCHAR(100)}
-              - column: {name: prenom, type: VARCHAR(100)}
-              - column: {name: email, type: VARCHAR(255), constraints: {nullable: false, unique: true}}
-              - column: {name: telephone, type: VARCHAR(20)}
-              - column: {name: adresse, type: VARCHAR(255)}
-              - column: { name: date_creation, type: TIMESTAMP WITHOUT TIME ZONE, constraints: { nullable: false } }
-
+              - column:
+                  name: id
+                  type: VARCHAR(50)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nom
+                  type: VARCHAR(100)
+              - column:
+                  name: prenom
+                  type: VARCHAR(100)
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: telephone
+                  type: VARCHAR(20)
+                  constraints:
+                    unique: true
+              - column:
+                  name: adresse
+                  type: VARCHAR(255)
+              - column:
+                  name: date_creation
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  constraints:
+                    nullable: false
 
         - createTable:
             tableName: livreur
             columns:
-              - column: {name: id, type: VARCHAR(50), constraints: {primaryKey: true, nullable: false}}
-              - column: {name: nom, type: VARCHAR(100)}
-              - column: {name: prenom, type: VARCHAR(100)}
-              - column: {name: telephone, type: VARCHAR(20)}
-              - column: {name: vehicule, type: VARCHAR(50)}
-              - column: {name: zone_assignee, type: VARCHAR(50)}
+              - column:
+                  name: id
+                  type: VARCHAR(50)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nom
+                  type: VARCHAR(100)
+              - column:
+                  name: prenom
+                  type: VARCHAR(100)
+              - column:
+                  name: telephone
+                  type: VARCHAR(20)
+              - column:
+                  name: vehicule
+                  type: VARCHAR(50)
+              - column:
+                  name: zone_assignee_id
+                  type: VARCHAR(50)
 
         - createTable:
             tableName: produit
             columns:
-              - column: {name: id, type: VARCHAR(50), constraints: {primaryKey: true, nullable: false}}
-              - column: {name: nom, type: VARCHAR(255), constraints: {nullable: false}}
-              - column: {name: categorie, type: VARCHAR(50)}
-              - column: {name: poids, type: NUMERIC(10, 2)}
-              - column: {name: prix, type: NUMERIC(10, 2)}
-              - column: { name: date_creation, type: TIMESTAMP WITHOUT TIME ZONE, constraints: { nullable: false } }
-
+              - column:
+                  name: id
+                  type: VARCHAR(50)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nom
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: categorie
+                  type: VARCHAR(50)
+              - column:
+                  name: poids
+                  type: NUMERIC(10,2)
+              - column:
+                  name: prix
+                  type: NUMERIC(10,2)
+              - column:
+                  name: date_creation
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  constraints:
+                    nullable: false
 
         - createTable:
             tableName: colis
             columns:
-              - column: {name: id, type: VARCHAR(50), constraints: {primaryKey: true, nullable: false}}
-              - column: {name: description, type: TEXT}
-              - column: {name: poids, type: NUMERIC(10, 2), constraints: {nullable: false}}
-              - column: {name: statut, type: VARCHAR(50), constraints: {nullable: false}}
-              - column: {name: priorite, type: VARCHAR(50)}
-              - column: {name: ville_destination, type: VARCHAR(100), constraints: {nullable: false}}
-              - column: {name: client_expediteur_id, type: VARCHAR(50), constraints: {nullable: false}}
-              - column: {name: destinataire_id, type: VARCHAR(50), constraints: {nullable: false}}
-              - column: {name: zone_id, type: VARCHAR(50), constraints: {nullable: false}}
-              - column: {name: livreur_id, type: VARCHAR(50)}
-              - column: { name: date_creation, type: TIMESTAMP WITHOUT TIME ZONE, constraints: { nullable: false } }
-
+              - column:
+                  name: id
+                  type: VARCHAR(50)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: poids
+                  type: NUMERIC(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: statut
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: priorite
+                  type: VARCHAR(50)
+              - column:
+                  name: ville_destination
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: client_expediteur_id
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: destinataire_id
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: zone_id
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: livreur_id
+                  type: VARCHAR(50)
+              - column:
+                  name: date_creation
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  constraints:
+                    nullable: false
 
         - createTable:
             tableName: historique_livraison
             columns:
-              - column: {name: id, type: VARCHAR(50), constraints: {primaryKey: true, nullable: false}}
-              - column: {name: colis_id, type: VARCHAR(50), constraints: {nullable: false}}
-              - column: {name: statut, type: VARCHAR(50), constraints: {nullable: false}}
-              - column: {name: date_changement, type: TIMESTAMP WITHOUT TIME ZONE, constraints: {nullable: false}}
-              - column: {name: commentaire, type: TEXT}
-              - column: { name: date_creation, type: TIMESTAMP WITHOUT TIME ZONE, constraints: { nullable: false } }
+              - column:
+                  name: id
+                  type: VARCHAR(50)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: colis_id
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: statut
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_changement
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: commentaire
+                  type: TEXT
+              - column:
+                  name: date_creation
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  constraints:
+                    nullable: false
 
         - createTable:
             tableName: colis_produit
             columns:
-              - column: {name: colis_id, type: VARCHAR(50), constraints: {primaryKey: true, nullable: false}}
-              - column: {name: produit_id, type: VARCHAR(50), constraints: {primaryKey: true, nullable: false}}
-              - column: {name: quantite, type: INT, constraints: {nullable: false}}
-              - column: {name: prix_unitaire, type: NUMERIC(10, 2)}
-              - column: {name: date_ajout, type: TIMESTAMP WITHOUT TIME ZONE}
-              - column: { name: date_creation, type: TIMESTAMP WITHOUT TIME ZONE, constraints: { nullable: false } }
+              - column:
+                  name: colis_id
+                  type: VARCHAR(50)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: produit_id
+                  type: VARCHAR(50)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: quantite
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: prix_unitaire
+                  type: NUMERIC(10,2)
+              - column:
+                  name: date_ajout
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: date_creation
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  constraints:
+                    nullable: false
 
   - changeSet:
       id: 20251028-02-add-foreign-keys
       author: Mahjoubech
       changes:
-
         - addForeignKeyConstraint:
-            baseColumnNames: zone_assignee_id
             baseTableName: livreur
+            baseColumnNames: zone_assignee_id
+            referencedTableName: zone
+            referencedColumnNames: id
             constraintName: fk_livreur_zone
             onDelete: RESTRICT
-            referencedColumnNames: id
-            referencedTableName: zone
 
         - addForeignKeyConstraint:
-            baseColumnNames: client_expediteur_id
             baseTableName: colis
+            baseColumnNames: client_expediteur_id
+            referencedTableName: client_expediteur
+            referencedColumnNames: id
             constraintName: fk_colis_client_expediteur
             onDelete: RESTRICT
-            referencedColumnNames: id
-            referencedTableName: client_expediteur
 
         - addForeignKeyConstraint:
+            baseTableName: colis
             baseColumnNames: destinataire_id
-            baseTableName: colis
-            constraintName: fk_colis_destinataire
-            onDelete: RESTRICT # منع حذف Destinataire
-            referencedColumnNames: id
             referencedTableName: destinataire
+            referencedColumnNames: id
+            constraintName: fk_colis_destinataire
+            onDelete: RESTRICT
 
         - addForeignKeyConstraint:
-            baseColumnNames: zone_id
             baseTableName: colis
+            baseColumnNames: zone_id
+            referencedTableName: zone
+            referencedColumnNames: id
             constraintName: fk_colis_zone
             onDelete: RESTRICT
-            referencedColumnNames: id
-            referencedTableName: zone
 
         - addForeignKeyConstraint:
-            baseColumnNames: livreur_id
             baseTableName: colis
+            baseColumnNames: livreur_id
+            referencedTableName: livreur
+            referencedColumnNames: id
             constraintName: fk_colis_livreur
             onDelete: SET NULL
-            referencedColumnNames: id
-            referencedTableName: livreur
 
         - addForeignKeyConstraint:
-            baseColumnNames: colis_id
             baseTableName: historique_livraison
+            baseColumnNames: colis_id
+            referencedTableName: colis
+            referencedColumnNames: id
             constraintName: fk_historique_colis
             onDelete: CASCADE
-            referencedColumnNames: id
-            referencedTableName: colis
 
         - addForeignKeyConstraint:
-            baseColumnNames: colis_id
             baseTableName: colis_produit
+            baseColumnNames: colis_id
+            referencedTableName: colis
+            referencedColumnNames: id
             constraintName: fk_colisproduit_colis
             onDelete: CASCADE
-            referencedColumnNames: id
-            referencedTableName: colis
 
         - addForeignKeyConstraint:
-            baseColumnNames: produit_id
             baseTableName: colis_produit
+            baseColumnNames: produit_id
+            referencedTableName: produit
+            referencedColumnNames: id
             constraintName: fk_colisproduit_produit
             onDelete: RESTRICT
-            referencedColumnNames: id
-            referencedTableName: produit
 
         - addUniqueConstraint:
+            tableName: colis_produit
             columnNames: colis_id, produit_id
             constraintName: uc_colis_produit
-            tableName: colis_produit
