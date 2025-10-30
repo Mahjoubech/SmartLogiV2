@@ -1,7 +1,7 @@
 package io.github.mahjoubech.smartlogiv2.mapper;
 
-import io.github.mahjoubech.smartlogiv2.dto.ClientDestinataireRequest;
-import io.github.mahjoubech.smartlogiv2.dto.ClientDestinataireResponse;
+import io.github.mahjoubech.smartlogiv2.dto.request.ClientDestinataireRequest;
+import io.github.mahjoubech.smartlogiv2.dto.response.ClientDestinataireResponse;
 import io.github.mahjoubech.smartlogiv2.model.entity.ClientExpediteur;
 import io.github.mahjoubech.smartlogiv2.model.entity.Destinataire;
 import org.mapstruct.Mapper;

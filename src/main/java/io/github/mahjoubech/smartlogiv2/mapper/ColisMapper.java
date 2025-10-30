@@ -1,7 +1,7 @@
 package io.github.mahjoubech.smartlogiv2.mapper;
 
-import io.github.mahjoubech.smartlogiv2.dto.ColisRequest;
-import io.github.mahjoubech.smartlogiv2.dto.ColisResponse;
+import io.github.mahjoubech.smartlogiv2.dto.request.ColisRequest;
+import io.github.mahjoubech.smartlogiv2.dto.response.ColisResponse;
 import io.github.mahjoubech.smartlogiv2.model.entity.Colis;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
