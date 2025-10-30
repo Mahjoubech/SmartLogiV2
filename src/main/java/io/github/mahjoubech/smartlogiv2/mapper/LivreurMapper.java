@@ -9,9 +9,8 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = {ZoneMapper.class})
 public interface LivreurMapper {
-    @Mapping(target = "zoneAssignee", ignore = true)
+    @Mapping(target = "zoneAssigned", ignore = true)
     Livreur toEntity(LivreurRequest dto);
-    @Mapping(target = "zoneAssignee", source = "zoneAssignee")
-    @Mapping(target = "totalColis", ignore = true)
+    @Mapping(target = "zoneAssignee", source = "zoneAssigned")
     LivreurResponse toResponse(Livreur entity);
 }

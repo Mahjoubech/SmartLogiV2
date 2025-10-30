@@ -11,6 +11,6 @@ public interface HistoriqueLivraisonMapper {
     @Mapping(target = "colis", ignore = true)
     HistoriqueLivraison toEntity(HistoriqueLivraisonRequest dto);
 
-    @Mapping(target = "statut", source = "statut.name")
+    @Mapping(target = "statut", source = "status")
     HistoriqueLivraisonResponse toResponse(HistoriqueLivraison entity);
 }

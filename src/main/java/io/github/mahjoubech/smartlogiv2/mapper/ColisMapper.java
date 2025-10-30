@@ -22,10 +22,10 @@ public interface ColisMapper {
         @Mapping(target = "produits", ignore = true)
         Colis toEntity(ColisRequest dto);
 
-        @Mapping(target = "statut", source = "statut.name")
-        @Mapping(target = "priorite", source = "priorite.name")
-        @Mapping(target = "clientExpediteur", source = "clientExpediteur", qualifiedByName = "toClientResponse")
-        @Mapping(target = "destinataire", source = "destinataire", qualifiedByName = "toDestinataireResponse")
+        @Mapping(target = "statut", source = "status")
+        @Mapping(target = "priorite", source = "prioriteStatus")
+        @Mapping(target = "clientExpediteur", source = "clientExpediteur")
+        @Mapping(target = "destinataire", source = "destinataire")
         ColisResponse toResponse(Colis entity);
 
 }
