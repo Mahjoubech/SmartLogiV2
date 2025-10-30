@@ -1,4 +1,4 @@
-package io.github.mahjoubech.smartlogiv2.dto;
+package io.github.mahjoubech.smartlogiv2.dto.response;
 
 import lombok.Data;
 
