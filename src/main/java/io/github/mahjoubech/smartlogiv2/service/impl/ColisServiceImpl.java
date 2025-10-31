@@ -4,15 +4,14 @@ import io.github.mahjoubech.smartlogiv2.dto.request.ColisRequest;
 import io.github.mahjoubech.smartlogiv2.dto.response.ColisResponse;
 import io.github.mahjoubech.smartlogiv2.dto.request.HistoriqueLivraisonRequest;
 import io.github.mahjoubech.smartlogiv2.dto.response.HistoriqueLivraisonResponse;
+import io.github.mahjoubech.smartlogiv2.exception.ResourceNotFoundException;
+import io.github.mahjoubech.smartlogiv2.exception.ValidationException;
 import io.github.mahjoubech.smartlogiv2.mapper.ColisMapper;
 import io.github.mahjoubech.smartlogiv2.model.entity.*;
-import io.github.mahjoubech.smartlogiv2.model.entity.Destinataire;
 import io.github.mahjoubech.smartlogiv2.model.enums.ColisStatus;
 import io.github.mahjoubech.smartlogiv2.repository.*;
 import io.github.mahjoubech.smartlogiv2.service.ColisService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,6 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +40,7 @@ public class ColisServiceImpl implements ColisService {
     private HistoriqueLivraison createInitialHistory(Colis colis, ColisStatus statut, String commentaire) {
         HistoriqueLivraison historique = new HistoriqueLivraison();
         historique.setColis(colis);
-        historique.setStatus(statut);
+        historique.setStatus(statut); // ✅ Correction dyal setStatut l'setStatus f'l'Entity
         historique.setDateChangement(ZonedDateTime.now());
         historique.setCommentaire(commentaire);
         return historique;
@@ -52,18 +50,20 @@ public class ColisServiceImpl implements ColisService {
     @Transactional
     public ColisResponse createDelivery(ColisRequest request) {
         ClientExpediteur expediteur = expediteurRepository.findById(request.getClientExpediteurId())
-                .orElseThrow(() -> new EntityNotFoundException("ClientExpediteur not found with ID: " + request.getClientExpediteurId()));
+                .orElseThrow(() -> new ResourceNotFoundException("ClientExpediteur", "ID", request.getClientExpediteurId()));
 
         Destinataire destinataire = destinataireRepository.findById(request.getDestinataireId())
-                .orElseThrow(() -> new EntityNotFoundException("Destinataire not found with ID: " + request.getDestinataireId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Destinataire", "ID", request.getDestinataireId()));
 
         Zone zone = zoneRepository.findById(request.getZoneId())
-                .orElseThrow(() -> new EntityNotFoundException("Zone not found with ID: " + request.getZoneId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Zone", "ID", request.getZoneId()));
+
         Colis colis = colisMapper.toEntity(request);
         colis.setClientExpediteur(expediteur);
         colis.setDestinataire(destinataire);
         colis.setZone(zone);
-        colis.setStatus(ColisStatus.CREE);
+        colis.setStatus(ColisStatus.CREE); // ✅ Correction dyal setStatut l'setStatus
+
         HistoriqueLivraison historique = createInitialHistory(colis, ColisStatus.CREE, "Demande de livraison créée par l'expéditeur.");
         colis.setHistorique(Collections.singleton(historique));
 
@@ -76,28 +76,37 @@ public class ColisServiceImpl implements ColisService {
     @Override
     public ColisResponse getColisById(String colisId) {
         Colis colis = colisRepository.findById(colisId)
-                .orElseThrow(() -> new RuntimeException("Colis non trouvé: " + colisId));
+                .orElseThrow(() -> new ResourceNotFoundException("Colis", "ID", colisId));
         return colisMapper.toResponse(colis);
     }
 
     @Override
+    @Transactional
     public ColisResponse updateColis(String colisId, ColisRequest request) {
         Colis colis = colisRepository.findById(colisId)
-                .orElseThrow(() -> new RuntimeException("Colis non trouvé: " + colisId));
+                .orElseThrow(() -> new ResourceNotFoundException("Colis", "ID", colisId));
+
         colis.setDescription(request.getDescription());
         colis.setWeight(request.getPoids());
+
         if (!colis.getClientExpediteur().getId().equals(request.getClientExpediteurId())) {
-            colis.setClientExpediteur(expediteurRepository.findById(request.getClientExpediteurId())
-                    .orElseThrow(() -> new RuntimeException("ClientExpediteur not found")));
+            ClientExpediteur newExpediteur = expediteurRepository.findById(request.getClientExpediteurId())
+                    .orElseThrow(() -> new ResourceNotFoundException("ClientExpediteur", "ID", request.getClientExpediteurId()));
+            colis.setClientExpediteur(newExpediteur);
         }
 
         return colisMapper.toResponse(colisRepository.save(colis));
     }
 
     @Override
+    @Transactional
     public void deleteColis(String colisId) {
         Colis colis = colisRepository.findById(colisId)
-                .orElseThrow(() -> new RuntimeException("Colis non trouvé: " + colisId));
+                .orElseThrow(() -> new ResourceNotFoundException("Colis", "ID", colisId));
+
+        if (colis.getStatus() != ColisStatus.CREE) { // getStatut rahou khaddam 3la l'Entity
+            throw new ValidationException("Impossible de supprimer un colis qui n'est pas au statut CREE.");
+        }
 
         colisRepository.delete(colis);
     }
@@ -106,50 +115,58 @@ public class ColisServiceImpl implements ColisService {
     @Transactional
     public ColisResponse updateColisStatus(String colisId, HistoriqueLivraisonRequest statusRequest) {
         Colis colis = colisRepository.findById(colisId)
-                .orElseThrow(() -> new RuntimeException("Colis non trouvé: " + colisId));
+                .orElseThrow(() -> new ResourceNotFoundException("Colis", "ID", colisId));
 
         try {
             ColisStatus newStatus = ColisStatus.valueOf(statusRequest.getStatut().toUpperCase());
 
+            // GESTION dyal l'Mantiq (ValidationException)
             if (colis.getStatus() == ColisStatus.LIVRE || colis.getStatus() == ColisStatus.ANNULE) {
-                throw new RuntimeException("Impossible de modifier le statut d'un colis terminé.");
+                throw new ValidationException("Impossible de modifier le statut d'un colis terminé.");
             }
 
-            colis.setStatus(newStatus);
+            colis.setStatus(newStatus); // ✅ Correction dyal setStatut l'setStatus
 
             HistoriqueLivraison newHistory = createInitialHistory(colis, newStatus, statusRequest.getCommentaire());
             historiqueRepository.save(newHistory);
-
             return colisMapper.toResponse(colisRepository.save(colis));
 
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Statut invalide fourni: " + statusRequest.getStatut());
+            throw new ValidationException("Statut invalide fourni: " + statusRequest.getStatut());
         }
     }
 
     @Override
     public List<HistoriqueLivraisonResponse> getColisHistory(String colisId) {
         Colis colis = colisRepository.findById(colisId)
-                .orElseThrow(() -> new RuntimeException("Colis non trouvé: " + colisId));
+                .orElseThrow(() -> new ResourceNotFoundException("Colis", "ID", colisId));
 
         return Collections.emptyList();
     }
 
     @Override
     public Page<ColisResponse> findColisByCriteria(String statut, String zoneId, String ville, String priorite, Pageable pageable) {
-        Page<Colis> colisPage = colisRepository.findByStatut(ColisStatus.valueOf(statut.toUpperCase()), pageable);
+        try {
+            ColisStatus enumStatut = ColisStatus.valueOf(statut.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Le statut fourni dans la recherche est invalide: " + statut);
+        }
 
         return Page.empty();
     }
 
     @Override
     public Page<ColisResponse> findByExpediteur(String expediteurId, Pageable pageable) {
+        expediteurRepository.findById(expediteurId)
+                .orElseThrow(() -> new ResourceNotFoundException("ClientExpediteur", "ID", expediteurId));
+
         return Page.empty();
     }
 
-
     @Override
     public Page<ColisResponse> findByDestinataire(String destinataireId, Pageable pageable) {
+        destinataireRepository.findById(destinataireId)
+                .orElseThrow(() -> new ResourceNotFoundException("Destinataire", "ID", destinataireId));
         return Page.empty();
     }
 
@@ -167,5 +184,4 @@ public class ColisServiceImpl implements ColisService {
     public Double calculateTotalWeightByZone(String zoneId) {
         return 0.0;
     }
-
 }
