@@ -14,7 +14,7 @@ public interface LivreurService {
     // Gestionnaire: Assigner un colis à un livreur
     ColisResponse assignColisToLivreur(String colisId, String livreurId);
 
-    Page<ColisResponse> getAssignedColis(String livreurId, Pageable pageable);
+    Page<ColisResponse> getAssignedColis( String livreurId, Pageable pageable);
 
     // Rechercher un livreur par mot-clé (nom, téléphone, etc.)
     Page<LivreurResponse> searchLivreurs(String keyword, Pageable pageable);
