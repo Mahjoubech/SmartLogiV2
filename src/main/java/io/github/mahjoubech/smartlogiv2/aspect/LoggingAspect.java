@@ -12,6 +12,22 @@ import org.springframework.stereotype.Component;
 public class LoggingAspect {
 
     private final Logger log = LoggerFactory.getLogger(LoggingAspect.class);
+    @Around("execution(* io.github.mahjoubech.smartlogiv2.service.impl.*ServiceImpl.*(..))")
+    public Object logMethodExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
 
-    // 4. AOP-T1.4 & AOP-T1.5 ghadi ykounou hna
+        long start = System.currentTimeMillis();
+
+
+        Object result = joinPoint.proceed();
+
+        long duration = System.currentTimeMillis() - start;
+
+        log.info("AOP Performance: {}.{}() took {} ms",
+                joinPoint.getSignature().getDeclaringTypeName(),
+                joinPoint.getSignature().getName(),
+                duration
+        );
+
+        return result;
+    }
 }
