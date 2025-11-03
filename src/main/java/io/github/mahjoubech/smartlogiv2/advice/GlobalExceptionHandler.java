@@ -74,6 +74,7 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND.value(),
                 ex.getMessage()
         );
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response); // 404
     }
 

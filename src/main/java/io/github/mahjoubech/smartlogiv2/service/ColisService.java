@@ -12,6 +12,7 @@ import java.util.Map;
 
 public interface ColisService {
     ColisResponse createDelivery(ColisRequest request);
+    List<ColisResponse> getAllColis();
     ColisResponse getColisById(String colisId);
     ColisResponse updateColis(String colisId, ColisRequest request);
     void deleteColis(String colisId);

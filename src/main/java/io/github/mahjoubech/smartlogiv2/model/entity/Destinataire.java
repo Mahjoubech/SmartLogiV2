@@ -1,20 +1,20 @@
 package io.github.mahjoubech.smartlogiv2.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
 @Entity
-@Data
+@Setter
+@Getter
 @Table(name = "destinataire")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Destinataire {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @EqualsAndHashCode.Include
     private String id;
     @Column(name = "nom", nullable = false)
     private String nom;

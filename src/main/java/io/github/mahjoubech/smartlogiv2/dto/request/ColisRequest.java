@@ -12,9 +12,10 @@ public class ColisRequest {
     @NotNull(message = "Le poids est obligatoire.")
     @Min(value = 0, message = "Le poids doit être positif.")
     private Double poids;
-
+    @NotBlank(message = "L'adresse est obligatoire.")
     private String description;
-    private String priorite; // HAUTE, NORMALE, FAIBLE (String li ghadi ytsawa b'Enum)
+    @NotBlank(message = "La priorité est obligatoire.")
+    private String priorite;
 
     @NotBlank(message = "La ville de destination est obligatoire.")
     private String villeDestination;
@@ -25,9 +26,10 @@ public class ColisRequest {
 
     @NotBlank(message = "Le destinataire est obligatoire.")
     private String destinataireId;
-
+    @NotBlank(message = "Le livreur est obligatoire.")
+    private String livreurId;
     @NotBlank(message = "La zone de destination est obligatoire.")
     private String zoneId;
-
+    @NotNull(message = "La liste des produits est obligatoire.")
     private List<ColisProduitRequest> produits;
 }
