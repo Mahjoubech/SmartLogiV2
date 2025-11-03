@@ -26,6 +26,9 @@ public interface ColisMapper {
         @Mapping(target = "priorite", source = "prioriteStatus")
         @Mapping(target = "clientExpediteur", source = "clientExpediteur")
         @Mapping(target = "destinataire", source = "destinataire")
+        @Mapping(target = "livreur", source = "livreur")
+        @Mapping(target = "livreur.zoneAssignee",ignore = true)
+        @Mapping(target = "zone", source = "zone")
         ColisResponse toResponse(Colis entity);
 
 }

@@ -2,15 +2,15 @@ package io.github.mahjoubech.smartlogiv2.model.entity;
 
 import io.github.mahjoubech.smartlogiv2.utils.ColisProduitId;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Entity
-@Data
+@Setter
+@Getter
 @Table(name = "colis_produit")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,4 +31,12 @@ public class ColisProduit {
     private BigDecimal prixUnitaire;
     @Column(name = "date_ajout", nullable = false)
     private ZonedDateTime dateAjout;
+    @Column(name = "date_creation", nullable = false, updatable = false)
+    private Date dateCreation;
+    @PrePersist
+    public void prePersist() {
+        if (dateCreation == null) {
+            dateCreation = new Date();
+        }
+    }
 }

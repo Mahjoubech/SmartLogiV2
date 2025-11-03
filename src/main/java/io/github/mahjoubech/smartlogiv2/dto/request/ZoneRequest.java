@@ -8,6 +8,7 @@ import lombok.Data;
 public class ZoneRequest {
     @NotBlank(message = "Le nom de la zone est obligatoire.")
     @Size(max = 255)
+    @NotBlank(message = "Le nom de la zone est obligatoire.")
     private String nom;
 
     @NotBlank(message = "Le code postal est obligatoire.")

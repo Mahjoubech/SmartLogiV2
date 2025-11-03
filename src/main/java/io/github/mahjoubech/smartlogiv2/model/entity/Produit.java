@@ -1,15 +1,14 @@
 package io.github.mahjoubech.smartlogiv2.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Set;
 
 @Entity
-@Data
+@Setter
+@Getter
 @Table(name = "produit")
 @NoArgsConstructor
 @AllArgsConstructor
