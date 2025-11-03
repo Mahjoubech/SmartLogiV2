@@ -107,13 +107,9 @@ public class ColisServiceImpl implements ColisService {
         return colisMapper.toResponse(colis);
     }
     @Override
-    public List<ColisResponse> getAllColis() {
-        List<Colis> colisList = colisRepository.findAll();
-        List<ColisResponse> responseList = new ArrayList<>();
-        for (Colis colis : colisList) {
-            responseList.add(colisMapper.toResponse(colis));
-        }
-        return responseList;
+    public Page<ColisResponse> getAllColis(Pageable pageable) {
+        Page<Colis> colisPage = colisRepository.findAll(pageable);
+        return colisPage.map(colisMapper::toResponse);
     }
 
     @Override
