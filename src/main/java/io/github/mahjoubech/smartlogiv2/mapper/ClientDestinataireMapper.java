@@ -1,14 +1,13 @@
 package io.github.mahjoubech.smartlogiv2.mapper;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.ClientDestinataireRequest;
-import io.github.mahjoubech.smartlogiv2.dto.response.ClientDestinataireResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.ClientDestinataireResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.basic.ClientDestinataireResponseBasic;
 import io.github.mahjoubech.smartlogiv2.model.entity.ClientExpediteur;
 import io.github.mahjoubech.smartlogiv2.model.entity.Destinataire;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
 
 import java.util.List;
 

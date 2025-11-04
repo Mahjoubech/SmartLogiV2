@@ -1,4 +1,4 @@
-package io.github.mahjoubech.smartlogiv2.dto.response;
+package io.github.mahjoubech.smartlogiv2.dto.response.detail;
 
 import io.github.mahjoubech.smartlogiv2.utils.ColisProduitId;
 import lombok.Data;

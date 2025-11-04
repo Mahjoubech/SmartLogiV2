@@ -1,7 +1,7 @@
 package io.github.mahjoubech.smartlogiv2.mapper;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.LivreurRequest;
-import io.github.mahjoubech.smartlogiv2.dto.response.LivreurResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.LivreurResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.basic.LivreurColisResponse;
 import io.github.mahjoubech.smartlogiv2.model.entity.Livreur;
 import org.mapstruct.Mapper;

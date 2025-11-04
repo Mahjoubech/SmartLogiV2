@@ -1,7 +1,7 @@
 package io.github.mahjoubech.smartlogiv2.mapper;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.HistoriqueLivraisonRequest;
-import io.github.mahjoubech.smartlogiv2.dto.response.HistoriqueLivraisonResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.HistoriqueLivraisonResponse;
 import io.github.mahjoubech.smartlogiv2.model.entity.HistoriqueLivraison;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

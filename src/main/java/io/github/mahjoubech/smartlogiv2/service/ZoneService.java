@@ -1,7 +1,7 @@
 package io.github.mahjoubech.smartlogiv2.service;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.ZoneRequest;
-import io.github.mahjoubech.smartlogiv2.dto.response.ZoneResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.ZoneResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

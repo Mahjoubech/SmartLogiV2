@@ -1,7 +1,6 @@
 package io.github.mahjoubech.smartlogiv2.dto.response.basic;
 
-import io.github.mahjoubech.smartlogiv2.dto.response.ClientDestinataireResponse;
-import io.github.mahjoubech.smartlogiv2.dto.response.ZoneResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.ZoneResponse;
 import lombok.Data;
 
 import java.time.ZonedDateTime;
