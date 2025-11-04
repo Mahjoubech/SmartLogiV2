@@ -1,7 +1,7 @@
 package io.github.mahjoubech.smartlogiv2.controller;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.LivreurRequest;
-import io.github.mahjoubech.smartlogiv2.dto.response.LivreurResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.LivreurResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.basic.LivreurColisResponse;
 import io.github.mahjoubech.smartlogiv2.service.LivreurService;
 import jakarta.validation.Valid;
@@ -13,8 +13,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping

@@ -3,7 +3,7 @@ package io.github.mahjoubech.smartlogiv2.service;
 import io.github.mahjoubech.smartlogiv2.dto.request.LivreurRequest;
 import io.github.mahjoubech.smartlogiv2.dto.response.basic.LivreurColisResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.ColisResponse;
-import io.github.mahjoubech.smartlogiv2.dto.response.LivreurResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.LivreurResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 public interface LivreurService {

@@ -4,7 +4,7 @@ import io.github.mahjoubech.smartlogiv2.dto.request.ColisProduitRequest;
 import io.github.mahjoubech.smartlogiv2.dto.request.ColisRequest;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.ColisResponse;
 import io.github.mahjoubech.smartlogiv2.dto.request.HistoriqueLivraisonRequest;
-import io.github.mahjoubech.smartlogiv2.dto.response.HistoriqueLivraisonResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.HistoriqueLivraisonResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.basic.ColisResponseBasic;
 import io.github.mahjoubech.smartlogiv2.exception.ResourceNotFoundException;
 import io.github.mahjoubech.smartlogiv2.exception.ValidationException;

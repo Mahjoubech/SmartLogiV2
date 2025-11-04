@@ -1,7 +1,7 @@
 package io.github.mahjoubech.smartlogiv2.service.impl;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.ZoneRequest;
-import io.github.mahjoubech.smartlogiv2.dto.response.ZoneResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.ZoneResponse;
 import io.github.mahjoubech.smartlogiv2.mapper.ZoneMapper;
 import io.github.mahjoubech.smartlogiv2.model.entity.Zone;
 import io.github.mahjoubech.smartlogiv2.repository.ZoneRepository;

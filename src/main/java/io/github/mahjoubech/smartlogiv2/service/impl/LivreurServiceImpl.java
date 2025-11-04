@@ -2,7 +2,7 @@ package io.github.mahjoubech.smartlogiv2.service.impl;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.LivreurRequest;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.ColisResponse;
-import io.github.mahjoubech.smartlogiv2.dto.response.LivreurResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.LivreurResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.basic.LivreurColisResponse;
 import io.github.mahjoubech.smartlogiv2.exception.ResourceNotFoundException;
 import io.github.mahjoubech.smartlogiv2.mapper.ColisMapper;
