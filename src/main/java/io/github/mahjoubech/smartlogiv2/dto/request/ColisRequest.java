@@ -26,8 +26,7 @@ public class ColisRequest {
 
     @NotBlank(message = "Le destinataire est obligatoire.")
     private String destinataireId;
-    @NotBlank(message = "Le livreur est obligatoire.")
-    private String livreurId;
+
     @NotBlank(message = "La zone de destination est obligatoire.")
     private String zoneId;
     @NotNull(message = "La liste des produits est obligatoire.")

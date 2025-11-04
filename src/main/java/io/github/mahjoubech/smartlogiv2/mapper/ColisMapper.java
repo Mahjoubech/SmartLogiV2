@@ -1,7 +1,8 @@
 package io.github.mahjoubech.smartlogiv2.mapper;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.ColisRequest;
-import io.github.mahjoubech.smartlogiv2.dto.response.ColisResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.ColisResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.basic.ColisResponseBasic;
 import io.github.mahjoubech.smartlogiv2.model.entity.Colis;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -26,9 +27,20 @@ public interface ColisMapper {
         @Mapping(target = "priorite", source = "prioriteStatus")
         @Mapping(target = "clientExpediteur", source = "clientExpediteur")
         @Mapping(target = "destinataire", source = "destinataire")
-        @Mapping(target = "livreur", source = "livreur")
         @Mapping(target = "livreur.zoneAssignee",ignore = true)
         @Mapping(target = "zone", source = "zone")
+        @Mapping(target = "livreur", source = "livreur",   qualifiedByName = "mapLivreur")
         ColisResponse toResponse(Colis entity);
+
+
+    @Mapping(target = "clientExpediteur",
+            source = "clientExpediteur")
+    @Mapping(target = "destinataire",
+            source = "destinataire")
+    @Mapping(target = "statut", source = "status")
+    @Mapping(target = "priorite", source = "prioriteStatus")
+    ColisResponseBasic toResponseBasic(Colis entity);
+
+
 
 }

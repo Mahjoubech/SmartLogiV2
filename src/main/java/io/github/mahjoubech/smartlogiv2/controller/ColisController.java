@@ -2,8 +2,9 @@ package io.github.mahjoubech.smartlogiv2.controller;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.ColisRequest;
 import io.github.mahjoubech.smartlogiv2.dto.request.HistoriqueLivraisonRequest;
-import io.github.mahjoubech.smartlogiv2.dto.response.ColisResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.ColisResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.HistoriqueLivraisonResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.basic.ColisResponseBasic;
 import io.github.mahjoubech.smartlogiv2.service.ColisService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,14 +30,15 @@ public class ColisController {
         ColisResponse response = colisService.createDelivery(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
     @GetMapping
-    public ResponseEntity<Iterable<ColisResponse>> getAllColis(@RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "10") int size,
-                                                               @RequestParam(defaultValue = "dateCreation") String sortBy,
-                                                               @RequestParam(defaultValue = "desc") String sortDir) {
+    public ResponseEntity<Page<ColisResponseBasic>> getAllColis(@RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size,
+                                                                @RequestParam(defaultValue = "dateCreation") String sortBy,
+                                                                @RequestParam(defaultValue = "desc") String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page , size, sort);
-        Page<ColisResponse> colisPage = colisService.getAllColis(pageable);
+        Page<ColisResponseBasic> colisPage = colisService.getAllColis(pageable);
         return ResponseEntity.ok().body(colisPage);
     }
 
@@ -55,9 +57,10 @@ public class ColisController {
     }
 
     @DeleteMapping("/{colisId}")
-    public ResponseEntity<Void> deleteColis(@PathVariable String colisId) {
+    public ResponseEntity<String> deleteColis(@PathVariable String colisId) {
         colisService.deleteColis(colisId);
-        return ResponseEntity.noContent().build();
+        String message = "Colis deleted successfully with ID: " + colisId;
+        return ResponseEntity.ok(message);
     }
 
     @PutMapping("/{colisId}/status")
@@ -67,7 +70,14 @@ public class ColisController {
         ColisResponse response = colisService.updateColisStatus(colisId, statusRequest);
         return ResponseEntity.ok(response);
     }
+    @PutMapping("/{colisId}/assign")
+    public ResponseEntity<ColisResponse> assignColisToLivreur(
+            @PathVariable String colisId,
+            @RequestParam String livreurId) {
 
+        ColisResponse updatedColis = colisService.assignColisToLivreur(colisId, livreurId);
+        return ResponseEntity.ok(updatedColis);
+    }
     @GetMapping("/search")
     public ResponseEntity<Page<ColisResponse>> findColisByCriteria(
             @RequestParam(required = false) String statut,
