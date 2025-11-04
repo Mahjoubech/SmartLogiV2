@@ -1,14 +1,15 @@
 package io.github.mahjoubech.smartlogiv2.service.impl;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.LivreurRequest;
-import io.github.mahjoubech.smartlogiv2.dto.response.ColisResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.ColisResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.LivreurResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.basic.LivreurColisResponse;
+import io.github.mahjoubech.smartlogiv2.exception.ResourceNotFoundException;
 import io.github.mahjoubech.smartlogiv2.mapper.ColisMapper;
 import io.github.mahjoubech.smartlogiv2.mapper.LivreurMapper;
 import io.github.mahjoubech.smartlogiv2.model.entity.Colis;
 import io.github.mahjoubech.smartlogiv2.model.entity.Livreur;
 import io.github.mahjoubech.smartlogiv2.model.entity.Zone;
-import io.github.mahjoubech.smartlogiv2.model.enums.ColisStatus;
 import io.github.mahjoubech.smartlogiv2.repository.ColisRepository;
 import io.github.mahjoubech.smartlogiv2.repository.LivreurRepository;
 import io.github.mahjoubech.smartlogiv2.repository.ZoneRepository;
@@ -33,21 +34,31 @@ public class LivreurServiceImpl implements LivreurService {
     @Transactional
     public LivreurResponse createLivreur(LivreurRequest request) {
         Zone zone = zoneRepository.findById(request.getZoneAssigneeId())
-                .orElseThrow(() -> new RuntimeException("Zone not found with ID: " + request.getZoneAssigneeId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Zone not found with ID: " + request.getZoneAssigneeId()));
 
         Livreur livreur = livreurMapper.toEntity(request);
         livreur.setZoneAssigned(zone);
 
         return livreurMapper.toResponse(livreurRepository.save(livreur));
     }
+   @Override
+   public  Page<LivreurResponse> getAllLivreurs(Pageable pageable) {
+       Page<Livreur> livreurPage = livreurRepository.findAll(pageable);
+       return livreurPage.map(livreurMapper::toResponse);
+   }
 
     @Override
     public LivreurResponse getLivreurById(String livreurId) {
         Livreur livreur = livreurRepository.findById(livreurId)
-                .orElseThrow(() -> new RuntimeException("Livreur not found with ID: " + livreurId));
+                .orElseThrow(() -> new ResourceNotFoundException("Livreur not found with ID: " + livreurId));
         return livreurMapper.toResponse(livreur);
     }
-
+    @Override
+    public void deleteLivreur(String livreurId){
+        Livreur livreur = livreurRepository.findById(livreurId)
+                .orElseThrow( () -> new ResourceNotFoundException("Livreur not found with ID: " + livreurId));
+        livreurRepository.delete(livreur);
+    }
     @Override
     @Transactional
     public LivreurResponse updateLivreur(String livreurId, LivreurRequest request) {
@@ -68,22 +79,6 @@ public class LivreurServiceImpl implements LivreurService {
         return livreurMapper.toResponse(livreurRepository.save(livreur));
     }
 
-    @Override
-    @Transactional
-    public ColisResponse assignColisToLivreur(String colisId, String livreurId) {
-        Colis colis = colisRepository.findById(colisId)
-                .orElseThrow(() -> new RuntimeException("Colis not found with ID: " + colisId));
-
-        Livreur livreur = livreurRepository.findById(livreurId)
-                .orElseThrow(() -> new RuntimeException("Livreur not found with ID: " + livreurId));
-
-        colis.setLivreur(livreur);
-        if (colis.getStatus() == ColisStatus.CREE) {
-            colis.setStatus(ColisStatus.COLLECTE);
-        }
-
-        return colisMapper.toResponse(colisRepository.save(colis));
-    }
 
     @Override
     public Page<ColisResponse> getAssignedColis(String livreurId, Pageable pageable) {
@@ -97,4 +92,9 @@ public class LivreurServiceImpl implements LivreurService {
 
         return livreurPage.map(livreurMapper::toResponse);
     }
+    @Override
+    public Page<LivreurColisResponse> getLivreurColisCounts(Pageable pageable){
+         return livreurRepository.getColisEvryLivreur(pageable);
+    }
+
 }
