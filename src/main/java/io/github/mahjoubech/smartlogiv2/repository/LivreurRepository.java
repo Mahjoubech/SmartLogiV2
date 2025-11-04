@@ -21,6 +21,8 @@ public interface LivreurRepository extends JpaRepository<Livreur, String> {
     JOIN c.livreur l
     GROUP BY CONCAT(l.nom, ' ', l.prenom)
 """)
+
+
     Page<LivreurColisResponse> getColisEvryLivreur(Pageable pageable);
 
 
