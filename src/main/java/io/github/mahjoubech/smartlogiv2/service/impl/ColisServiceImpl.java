@@ -2,9 +2,10 @@ package io.github.mahjoubech.smartlogiv2.service.impl;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.ColisProduitRequest;
 import io.github.mahjoubech.smartlogiv2.dto.request.ColisRequest;
-import io.github.mahjoubech.smartlogiv2.dto.response.ColisResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.ColisResponse;
 import io.github.mahjoubech.smartlogiv2.dto.request.HistoriqueLivraisonRequest;
 import io.github.mahjoubech.smartlogiv2.dto.response.HistoriqueLivraisonResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.basic.ColisResponseBasic;
 import io.github.mahjoubech.smartlogiv2.exception.ResourceNotFoundException;
 import io.github.mahjoubech.smartlogiv2.exception.ValidationException;
 import io.github.mahjoubech.smartlogiv2.mapper.ColisMapper;
@@ -60,8 +61,6 @@ public class ColisServiceImpl implements ColisService {
 
         Destinataire destinataire = destinataireRepository.findById(request.getDestinataireId())
                 .orElseThrow(() -> new ResourceNotFoundException("Destinataire", "ID", request.getDestinataireId()));
-        Livreur livreur = livreurRepository.findById(request.getLivreurId())
-                .orElseThrow(() -> new ResourceNotFoundException("Destinataire", "ID", request.getDestinataireId()));
         Zone zone = zoneRepository.findById(request.getZoneId())
                 .orElseThrow(() -> new ResourceNotFoundException("Zone", "ID", request.getZoneId()));
 
@@ -69,7 +68,6 @@ public class ColisServiceImpl implements ColisService {
         colis.setClientExpediteur(expediteur);
         colis.setDestinataire(destinataire);
         colis.setZone(zone);
-        colis.setLivreur(livreur);
         colis.setStatus(ColisStatus.CREE);
 
         Set<ColisProduit> produitsSet = new HashSet<>();
@@ -107,11 +105,10 @@ public class ColisServiceImpl implements ColisService {
         return colisMapper.toResponse(colis);
     }
     @Override
-    public Page<ColisResponse> getAllColis(Pageable pageable) {
+    public Page<ColisResponseBasic> getAllColis(Pageable pageable) {
         Page<Colis> colisPage = colisRepository.findAll(pageable);
-        return colisPage.map(colisMapper::toResponse);
+        return colisPage.map(colisMapper::toResponseBasic);
     }
-
     @Override
     @Transactional
     public ColisResponse updateColis(String colisId, ColisRequest request) {
@@ -133,13 +130,6 @@ public class ColisServiceImpl implements ColisService {
             Zone newZone = zoneRepository.findById(request.getZoneId())
                     .orElseThrow(() -> new ResourceNotFoundException("Zone", "ID", request.getZoneId()));
             colis.setZone(newZone);
-        }
-        if (request.getLivreurId() != null) {
-            if (colis.getLivreur() == null || !colis.getLivreur().getId().equals(request.getLivreurId())) {
-                Livreur newLivreur = livreurRepository.findById(request.getLivreurId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Livreur", "ID", request.getLivreurId()));
-                colis.setLivreur(newLivreur);
-            }
         } else {
             colis.setLivreur(null);
         }
@@ -155,7 +145,7 @@ public class ColisServiceImpl implements ColisService {
         Colis colis = colisRepository.findById(colisId)
                 .orElseThrow(() -> new ResourceNotFoundException("Colis", "ID", colisId));
 
-        if (colis.getStatus() != ColisStatus.CREE) { // getStatut rahou khaddam 3la l'Entity
+        if (colis.getStatus() != ColisStatus.CREE) {
             throw new ValidationException("Impossible de supprimer un colis qui n'est pas au statut CREE.");
         }
 
@@ -273,6 +263,26 @@ public class ColisServiceImpl implements ColisService {
                         map -> map.get(groupByField).toString(),
                         map -> (Long) map.get("count")
                 ));
+    }
+    @Override
+    @Transactional
+    public ColisResponse assignColisToLivreur(String colisId, String livreurId) {
+        Colis colis = colisRepository.findById(colisId)
+                .orElseThrow(() -> new RuntimeException("Colis not found with ID: " + colisId));
+
+        Livreur livreur = livreurRepository.findById(livreurId)
+                .orElseThrow(() -> new RuntimeException("Livreur not found with ID: " + livreurId));
+        if (!colis.getZone().getId().equals(livreur.getZoneAssigned().getId())) {
+            throw new ValidationException(
+                    "Le colis (Zone: " +colis.getZone().getNom() + ") ne correspond pas à la zone assignée au livreur (" + livreur.getZoneAssigned().getNom() + ")."
+            );
+        }
+        colis.setLivreur(livreur);
+        if (colis.getStatus() == ColisStatus.CREE) {
+            colis.setStatus(ColisStatus.COLLECTE);
+        }
+
+        return colisMapper.toResponse(colisRepository.save(colis));
     }
 
     @Override

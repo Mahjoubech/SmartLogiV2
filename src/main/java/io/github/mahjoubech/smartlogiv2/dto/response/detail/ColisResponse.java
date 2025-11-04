@@ -1,5 +1,6 @@
-package io.github.mahjoubech.smartlogiv2.dto.response;
+package io.github.mahjoubech.smartlogiv2.dto.response.detail;
 
+import io.github.mahjoubech.smartlogiv2.dto.response.*;
 import lombok.Data;
 
 import java.time.ZonedDateTime;
@@ -17,8 +18,9 @@ public class ColisResponse {
     private ClientDestinataireResponse clientExpediteur;
     private ClientDestinataireResponse destinataire;
     private ZoneResponse zone;
-    private LivreurResponse livreur;
 
+    private LivreurResponse livreur;
     private List<HistoriqueLivraisonResponse> historique;
     private List<ColisProduitResponse> produits;
+
 }
