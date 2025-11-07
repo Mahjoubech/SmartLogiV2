@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping
-        ("/api/v1/livreur")
+        ("/api/v1/gestionner/livreur")
 @RequiredArgsConstructor
 public class LivreurController {
 
