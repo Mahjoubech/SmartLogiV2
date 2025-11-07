@@ -32,5 +32,16 @@ public interface ColisRepository extends JpaRepository<Colis,String> , JpaSpecif
     );
     @Query("SELECT SUM(c.poids) FROM Colis c WHERE c.zone.id = :zoneId")
     Double sumPoidsByZoneId(@Param("zoneId") String zoneId);
+    @Query("SELECT c FROM Colis c WHERE " +
+            "c.poids = :poids AND " +
+            "c.status = :status AND " +
+            "c.villeDestination = :villeDestination AND " +
+            "c.prioriteStatus = :prioriteStatus")
+    List<Colis> findByClientExpediteurEmailAndDestinataireEmailAndPoidsAndStatusAndVilleDestinationAndPrioriteStatus(
+            @Param("poids") double poids,
+            @Param("status") ColisStatus status,
+            @Param("villeDestination") String villeDestination,
+            @Param("prioriteStatus") PrioriteStatus prioriteStatus
+    );
 }
 

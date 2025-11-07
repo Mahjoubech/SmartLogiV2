@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -65,8 +66,7 @@ public class Colis {
     private Set<HistoriqueLivraison> historique;
 
     @OneToMany(mappedBy = "colis", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ColisProduit> produits;
-
+    private Set<ColisProduit> produits ;
     @PrePersist
     public void prePersist() {
         if (dateCreation == null) {

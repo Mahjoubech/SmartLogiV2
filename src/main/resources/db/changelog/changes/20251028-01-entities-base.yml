@@ -138,6 +138,7 @@ databaseChangeLog:
                     type: VARCHAR(255)
                     constraints:
                       nullable: false
+                      unique: true
                 - column:
                     name: categorie
                     type: VARCHAR(50)

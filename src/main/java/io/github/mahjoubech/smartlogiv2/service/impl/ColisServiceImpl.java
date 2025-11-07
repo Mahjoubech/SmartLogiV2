@@ -5,6 +5,7 @@ import io.github.mahjoubech.smartlogiv2.dto.request.*;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.ColisResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.HistoriqueLivraisonResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.basic.ColisResponseBasic;
+import io.github.mahjoubech.smartlogiv2.exception.ConflictStateException;
 import io.github.mahjoubech.smartlogiv2.exception.ResourceNotFoundException;
 import io.github.mahjoubech.smartlogiv2.exception.ValidationException;
 import io.github.mahjoubech.smartlogiv2.mapper.ColisMapper;
@@ -45,6 +46,7 @@ public class ColisServiceImpl implements ColisService {
     private final HistoriqueLivraisonRepository historiqueRepository;
     private final LivreurRepository livreurRepository;
     private final ProduitRepository produitRepository;
+    private  final ColisProduitRepository colisProduitRepository;
     private  final HistoriqueLivraisonMapper historiqueLivraisonMapper;
     private final ColisMapper colisMapper;
 
@@ -61,6 +63,19 @@ public class ColisServiceImpl implements ColisService {
     @Override
     @Transactional
     public ColisResponse createDelivery(ColisRequest request) {
+        PrioriteStatus prioriteEnum = PrioriteStatus.valueOf(request.getPriorite().toUpperCase());
+
+        List<Colis> existingColisList = colisRepository.findByClientExpediteurEmailAndDestinataireEmailAndPoidsAndStatusAndVilleDestinationAndPrioriteStatus(
+                request.getPoids(),
+                ColisStatus.CREE,
+                request.getVilleDestination(),
+                prioriteEnum
+        );
+
+        if (!existingColisList.isEmpty()) {
+            throw new ConflictStateException("Un colis avec les mêmes détails ( Poids,  Priorité) existe déjà avec l'ID: " + existingColisList.get(0).getId());
+        }
+
          ClientExpediteur expediteur = expediteurRepository.findByEmail(request.getClientExpediteurEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("ClientExpediteur", "ID", request.getClientExpediteurEmail()));
 
@@ -95,31 +110,35 @@ public class ColisServiceImpl implements ColisService {
         Set<ColisProduit> produitsSet = new HashSet<>();
         if (request.getProduits() != null && !request.getProduits().isEmpty()) {
             for (ProduitRequest produitRequest : request.getProduits()) {
-                Produit produit = new Produit();
-                produit.setNom(produitRequest.getNom());
-                produit.setCategorie(produitRequest.getCategorie());
-                produit.setPoids(produitRequest.getPoids());
-                produit.setPrix(produitRequest.getPrix());
-                Produit savedProduit = produitRepository.save(produit);
+
+                Produit produitEntity = produitRepository.findByNomIgnoreCase(produitRequest.getNom())
+                        .orElseGet(() -> {
+                            Produit newProduit = new Produit();
+                            newProduit.setNom(produitRequest.getNom());
+                            newProduit.setCategorie(produitRequest.getCategorie());
+                            newProduit.setPoids(produitRequest.getPoids());
+                            newProduit.setPrix(produitRequest.getPrix());
+                            return produitRepository.save(newProduit);
+                        });
+
                 ColisProduit colisProduit = new ColisProduit();
                 colisProduit.setColis(savedColis);
-                colisProduit.setProduit(savedProduit);
-                colisProduit.setQuantite(produitRequest.getColisProduit().getQuantite()); // 👈 Nssmaḥo l'l'Nested DTO
+                colisProduit.setProduit(produitEntity);
+                colisProduit.setQuantite(produitRequest.getColisProduit().getQuantite());
                 colisProduit.setDateAjout(ZonedDateTime.now());
-                BigDecimal prixTotal = savedProduit.getPrix().multiply(BigDecimal.valueOf(produitRequest.getColisProduit().getQuantite()));
+
+                BigDecimal prixTotal = produitEntity.getPrix().multiply(BigDecimal.valueOf(produitRequest.getColisProduit().getQuantite()));
                 colisProduit.setPrixUnitaire(prixTotal);
 
                 ColisProduitId id = new ColisProduitId();
                 id.setColisId(savedColis.getId());
-                id.setProduitId(savedProduit.getId());
+                id.setProduitId(produitEntity.getId());
                 colisProduit.setColisProduitId(id);
-
                 produitsSet.add(colisProduit);
             }
         }
 
         HistoriqueLivraison historique = createInitialHistory(colis, ColisStatus.CREE, "Demande de livraison créée par l'expéditeur.");
-//        colis.setHistorique(Collections.singleton(historique));
         Set<HistoriqueLivraison> historiqueSet = new HashSet<>();
         historiqueSet.add(historique);
         savedColis.setHistorique(historiqueSet);
@@ -144,39 +163,122 @@ public class ColisServiceImpl implements ColisService {
     }
     @Override
     @Transactional
-    public ColisResponse updateColis(String colisId, ColisRequest colisRequest) {
-       return null;
-    }
-//    @Override
-//    @Transactional
-//    public ColisResponse updateColis(String colisId, ColisRequest request) {
-//        Colis colis = colisRepository.findById(colisId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Colis", "ID", colisId));
-//        if (!colis.getClientExpediteur().getId().equals(request.getClientExpediteurId())) {
-//            ClientExpediteur newExpediteur = expediteurRepository.findById(request.getClientExpediteurId())
-//                    .orElseThrow(() -> new ResourceNotFoundException("ClientExpediteur", "ID", request.getClientExpediteurId()));
-//            colis.setClientExpediteur(newExpediteur);
-//        }
-//
-//        if (!colis.getDestinataire().getId().equals(request.getDestinataireId())) {
-//            Destinataire newDestinataire = destinataireRepository.findById(request.getDestinataireId())
-//                    .orElseThrow(() -> new ResourceNotFoundException("Destinataire", "ID", request.getDestinataireId()));
-//            colis.setDestinataire(newDestinataire);
-//        }
-//
-//        if (!colis.getZone().getId().equals(request.getZoneId())) {
-//            Zone newZone = zoneRepository.findById(request.getZoneId())
-//                    .orElseThrow(() -> new ResourceNotFoundException("Zone", "ID", request.getZoneId()));
-//            colis.setZone(newZone);
-//        } else {
-//            colis.setLivreur(null);
-//        }
-//
-//        colis.setDescription(request.getDescription());
-//        colis.setPoids(request.getPoids());
-//        return colisMapper.toResponse(colisRepository.save(colis));
-//    }
+    public ColisResponse updateColis(String colisId, ColisRequest request) {
 
+        Colis colis = colisRepository.findById(colisId)
+                .orElseThrow(() -> new ResourceNotFoundException("Colis", "ID", colisId));
+
+        if (colis.getStatus() != ColisStatus.CREE) {
+            throw new ValidationException("Impossible de modifier les détails du colis. Le statut actuel est: " + colis.getStatus());
+        }
+
+        // 1. MISE À JOUR DES ENTITÉS LIÉES (Expediteur, Destinataire, Zone)
+
+        ClientExpediteur expediteur = expediteurRepository.findByEmail(request.getClientExpediteurEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("ClientExpediteur", "Email", request.getClientExpediteurEmail()));
+        Destinataire destinataire = destinataireRepository.findByEmail(request.getDestinataireEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Destinataire", "Email", request.getDestinataireEmail()));
+
+        Zone zone = zoneRepository.findByCodePostal(request.getCodePostal())
+                .orElseGet(() -> {
+                    ObjectMapper mapper = new ObjectMapper();
+                    try (InputStream is = getClass().getResourceAsStream("/data/zone.json")) {
+                        List<ZoneRequest> zonesList = Arrays.asList(mapper.readValue(is, ZoneRequest[].class));
+                        ZoneRequest zr = zonesList.stream()
+                                .filter(z -> z.getCodePostal().equals(request.getCodePostal()))
+                                .findFirst()
+                                .orElseThrow(() -> new ResourceNotFoundException("Zone non trouvée", "codePostal", request.getCodePostal()));
+                        Zone newZone = zoneMapper.toEntity(zr);
+                        return zoneRepository.save(newZone);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Erreur lecture JSON zones", e);
+                    }
+                });
+        // Mise à jour des champs principaux du colis
+        colis.setClientExpediteur(expediteur);
+        colis.setDestinataire(destinataire);
+        colis.setZone(zone);
+        colis.setDescription(request.getDescription());
+        colis.setPoids(request.getPoids());
+
+        try {
+            colis.setPrioriteStatus(PrioriteStatus.valueOf(request.getPriorite().toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Priorité invalide fournie: " + request.getPriorite());
+        }
+
+        // *************************************************************************
+        // FIX PRINCIPAL: GESTION DE L'UPSERT DES PRODUITS ET ASSOCIATIONS
+        // *************************************************************************
+
+        // Set temporaire pour contenir les associations mises à jour/créées
+        Set<ColisProduit> produitsUpdated = new HashSet<>();
+
+        if (request.getProduits() != null && !request.getProduits().isEmpty()) {
+            for (ProduitRequest produitRequest : request.getProduits()) {
+
+                // 1. FIND OR CREATE/UPDATE de l'entité Produit (les détails du produit peuvent changer)
+                Produit produitEntity = produitRepository.findByNomIgnoreCase(produitRequest.getNom())
+                        .map(existingProduit -> {
+                            // UPDATE de l'entité Produit si elle existe
+                            existingProduit.setCategorie(produitRequest.getCategorie());
+                            existingProduit.setPoids(produitRequest.getPoids());
+                            existingProduit.setPrix(produitRequest.getPrix());
+                            return produitRepository.save(existingProduit);
+                        })
+                        .orElseGet(() -> {
+                            // CREATE d'une nouvelle entité Produit
+                            Produit newProduit = new Produit();
+                            newProduit.setNom(produitRequest.getNom());
+                            newProduit.setCategorie(produitRequest.getCategorie());
+                            newProduit.setPoids(produitRequest.getPoids());
+                            newProduit.setPrix(produitRequest.getPrix());
+                            return produitRepository.save(newProduit);
+                        });
+
+                // 2. Préparation de l'ID de l'association (Clé Composée)
+                ColisProduitId associationId = new ColisProduitId();
+                associationId.setColisId(colis.getId());
+                associationId.setProduitId(produitEntity.getId());
+
+                // 3. FIND OR CREATE/UPDATE de l'ASSOCIATION ColisProduit
+
+                ColisProduit colisProduit = colisProduitRepository.findById(associationId)
+                        .map(existingAssociation -> {
+                            // ✅ UPSERT: L'association existe, on met à jour la quantité
+                            existingAssociation.setQuantite(produitRequest.getColisProduit().getQuantite());
+                            // On garde la même instance
+                            return existingAssociation;
+                        })
+                        .orElseGet(() -> {
+                            // ✅ UPSERT: L'association n'existe pas, on la crée
+                            ColisProduit newAssociation = new ColisProduit();
+                            newAssociation.setColis(colis);
+                            newAssociation.setProduit(produitEntity);
+                            newAssociation.setColisProduitId(associationId);
+                            newAssociation.setQuantite(produitRequest.getColisProduit().getQuantite());
+                            newAssociation.setDateAjout(ZonedDateTime.now());
+                            return newAssociation;
+                        });
+
+                // 4. Calcul du prix total et ajout
+                java.math.BigDecimal prixTotal = produitEntity.getPrix().multiply(java.math.BigDecimal.valueOf(colisProduit.getQuantite()));
+                colisProduit.setPrixUnitaire(prixTotal);
+
+                produitsUpdated.add(colisProduit);
+            }
+        }
+
+        // 5. Remplacement de la Collection pour la Persistance
+        // C'est ce bloc qui gère la suppression des anciens produits non inclus dans le request
+        // et la mise à jour/ajout des nouveaux sans ObjectDeletedException, car les objets
+        // existants ont été trouvés et mis à jour.
+        colis.getProduits().clear();
+        colis.getProduits().addAll(produitsUpdated);
+
+        // 6. Sauvegarde et retour
+        return colisMapper.toResponse(colisRepository.save(colis));
+    }
     @Override
     @Transactional
     public void deleteColis(String colisId) {
