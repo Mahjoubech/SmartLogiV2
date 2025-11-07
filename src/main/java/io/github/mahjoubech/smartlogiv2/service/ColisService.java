@@ -18,8 +18,7 @@ public interface ColisService {
     ColisResponse updateColis(String colisId, ColisRequest request);
     void deleteColis(String colisId);
     ColisResponse updateColisStatus(String colisId, HistoriqueLivraisonRequest statusRequest);
-    List<HistoriqueLivraisonResponse> getColisHistory(String colisId);
-    ColisResponse assignColisToLivreur(String colisId, String livreurId);
+    Page<HistoriqueLivraisonResponse> getColisHistory(String colisId , Pageable pageable);    ColisResponse assignColisToLivreur(String colisId, String livreurId);
     Page<ColisResponse> findColisByCriteria(String statut, String zoneId, String ville, String priorite, Pageable pageable);
     Page<ColisResponse> findByExpediteur(String expediteurId, Pageable pageable);
     Page<ColisResponse> findByDestinataire(String destinataireId, Pageable pageable);

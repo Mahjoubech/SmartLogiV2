@@ -70,7 +70,7 @@ public class ColisController {
         ColisResponse response = colisService.updateColisStatus(colisId, statusRequest);
         return ResponseEntity.ok(response);
     }
-    @PutMapping("/{colisId}/assign")
+    @PutMapping("gestionner/livreur/{colisId}/assign")
     public ResponseEntity<ColisResponse> assignColisToLivreur(
             @PathVariable String colisId,
             @RequestParam String livreurId) {
@@ -100,8 +100,8 @@ public class ColisController {
     }
 
     @GetMapping("/{colisId}/history")
-    public ResponseEntity<List<HistoriqueLivraisonResponse>> getColisHistory(@PathVariable String colisId) {
-        List<HistoriqueLivraisonResponse> history = colisService.getColisHistory(colisId);
+    public ResponseEntity<Page<HistoriqueLivraisonResponse>> getColisHistory(@PathVariable String colisId , Pageable pageable) {
+        Page<HistoriqueLivraisonResponse> history = colisService.getColisHistory(colisId , pageable);
         return ResponseEntity.ok(history);
     }
 

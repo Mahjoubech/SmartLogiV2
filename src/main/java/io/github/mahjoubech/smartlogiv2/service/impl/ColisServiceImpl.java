@@ -1,14 +1,15 @@
 package io.github.mahjoubech.smartlogiv2.service.impl;
 
-import io.github.mahjoubech.smartlogiv2.dto.request.ColisProduitRequest;
-import io.github.mahjoubech.smartlogiv2.dto.request.ColisRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.mahjoubech.smartlogiv2.dto.request.*;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.ColisResponse;
-import io.github.mahjoubech.smartlogiv2.dto.request.HistoriqueLivraisonRequest;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.HistoriqueLivraisonResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.basic.ColisResponseBasic;
 import io.github.mahjoubech.smartlogiv2.exception.ResourceNotFoundException;
 import io.github.mahjoubech.smartlogiv2.exception.ValidationException;
 import io.github.mahjoubech.smartlogiv2.mapper.ColisMapper;
+import io.github.mahjoubech.smartlogiv2.mapper.HistoriqueLivraisonMapper;
+import io.github.mahjoubech.smartlogiv2.mapper.ZoneMapper;
 import io.github.mahjoubech.smartlogiv2.model.entity.*;
 import io.github.mahjoubech.smartlogiv2.model.enums.ColisStatus;
 import io.github.mahjoubech.smartlogiv2.model.enums.PrioriteStatus;
@@ -21,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -38,10 +41,11 @@ public class ColisServiceImpl implements ColisService {
     private final ClientExpediteurRepository expediteurRepository;
     private final DestinataireRepository destinataireRepository;
     private final ZoneRepository zoneRepository;
+    private final ZoneMapper zoneMapper;
     private final HistoriqueLivraisonRepository historiqueRepository;
     private final LivreurRepository livreurRepository;
     private final ProduitRepository produitRepository;
-
+    private  final HistoriqueLivraisonMapper historiqueLivraisonMapper;
     private final ColisMapper colisMapper;
 
     private HistoriqueLivraison createInitialHistory(Colis colis, ColisStatus statut, String commentaire) {
@@ -53,49 +57,78 @@ public class ColisServiceImpl implements ColisService {
         return historique;
     }
 
+
     @Override
     @Transactional
     public ColisResponse createDelivery(ColisRequest request) {
-        ClientExpediteur expediteur = expediteurRepository.findById(request.getClientExpediteurId())
-                .orElseThrow(() -> new ResourceNotFoundException("ClientExpediteur", "ID", request.getClientExpediteurId()));
+         ClientExpediteur expediteur = expediteurRepository.findByEmail(request.getClientExpediteurEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("ClientExpediteur", "ID", request.getClientExpediteurEmail()));
 
-        Destinataire destinataire = destinataireRepository.findById(request.getDestinataireId())
-                .orElseThrow(() -> new ResourceNotFoundException("Destinataire", "ID", request.getDestinataireId()));
-        Zone zone = zoneRepository.findById(request.getZoneId())
-                .orElseThrow(() -> new ResourceNotFoundException("Zone", "ID", request.getZoneId()));
+        Destinataire destinataire = destinataireRepository.findByEmail(request.getDestinataireEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Destinataire", "ID", request.getDestinataireEmail()));
 
+        Zone zone = zoneRepository.findByCodePostal(request.getCodePostal())
+                .orElseGet(() -> {
+                    ObjectMapper mapper = new ObjectMapper();
+                    try (InputStream is = getClass().getResourceAsStream("/data/zone.json")) {
+                        List<ZoneRequest> zonesList = Arrays.asList(mapper.readValue(is, ZoneRequest[].class));
+                        ZoneRequest zr = zonesList.stream()
+                                .filter(z -> z.getCodePostal().equals(request.getCodePostal()))
+                                .findFirst()
+                                .orElseThrow(() -> new ResourceNotFoundException("Zone non trouvée", "codePostal", request.getCodePostal()));
+                        Zone newZone = zoneMapper.toEntity(zr);
+                        return zoneRepository.save(newZone);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Erreur lecture JSON zones", e);
+                    }
+                });
         Colis colis = colisMapper.toEntity(request);
         colis.setClientExpediteur(expediteur);
         colis.setDestinataire(destinataire);
         colis.setZone(zone);
         colis.setStatus(ColisStatus.CREE);
 
-        Set<ColisProduit> produitsSet = new HashSet<>();
-
-        for (ColisProduitRequest p : request.getProduits()) {
-            Produit produit = produitRepository.findById(p.getProduitId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Produit non trouvé avec id: " + p.getProduitId()));
-            ColisProduit colisProduit = new ColisProduit();
-            ColisProduitId id = new ColisProduitId();
-            id.setColisId(colis.getId());
-            id.setProduitId(produit.getId());
-            colisProduit.setColisProduitId(id);
-            colisProduit.setProduit(produit);
-            BigDecimal prixUnitaire = produit.getPrix().multiply(BigDecimal.valueOf(p.getQuantite()));
-            colisProduit.setPrixUnitaire(prixUnitaire);
-            colisProduit.setQuantite(p.getQuantite());
-            colisProduit.setColis(colis);
-            produitsSet.add(colisProduit);
-        }
-        colis.setProduits(produitsSet);
-        colis.setPrioriteStatus(request.getPriorite().equalsIgnoreCase("URGENT") ? PrioriteStatus.URGENT : PrioriteStatus.NORMAL);
-        HistoriqueLivraison historique = createInitialHistory(colis, ColisStatus.CREE, "Demande de livraison créée par l'expéditeur.");
-        colis.setHistorique(Collections.singleton(historique));
+        colis.setPrioriteStatus(PrioriteStatus.valueOf(request.getPriorite().toUpperCase()));
 
         Colis savedColis = colisRepository.save(colis);
+
+        Set<ColisProduit> produitsSet = new HashSet<>();
+        if (request.getProduits() != null && !request.getProduits().isEmpty()) {
+            for (ProduitRequest produitRequest : request.getProduits()) {
+                Produit produit = new Produit();
+                produit.setNom(produitRequest.getNom());
+                produit.setCategorie(produitRequest.getCategorie());
+                produit.setPoids(produitRequest.getPoids());
+                produit.setPrix(produitRequest.getPrix());
+                Produit savedProduit = produitRepository.save(produit);
+                ColisProduit colisProduit = new ColisProduit();
+                colisProduit.setColis(savedColis);
+                colisProduit.setProduit(savedProduit);
+                colisProduit.setQuantite(produitRequest.getColisProduit().getQuantite()); // 👈 Nssmaḥo l'l'Nested DTO
+                colisProduit.setDateAjout(ZonedDateTime.now());
+                BigDecimal prixTotal = savedProduit.getPrix().multiply(BigDecimal.valueOf(produitRequest.getColisProduit().getQuantite()));
+                colisProduit.setPrixUnitaire(prixTotal);
+
+                ColisProduitId id = new ColisProduitId();
+                id.setColisId(savedColis.getId());
+                id.setProduitId(savedProduit.getId());
+                colisProduit.setColisProduitId(id);
+
+                produitsSet.add(colisProduit);
+            }
+        }
+
+        HistoriqueLivraison historique = createInitialHistory(colis, ColisStatus.CREE, "Demande de livraison créée par l'expéditeur.");
+//        colis.setHistorique(Collections.singleton(historique));
+        Set<HistoriqueLivraison> historiqueSet = new HashSet<>();
+        historiqueSet.add(historique);
+        savedColis.setHistorique(historiqueSet);
+        savedColis.setProduits(produitsSet);
+
+        Colis finalSavedColis = colisRepository.save(savedColis);
         historiqueRepository.save(historique);
 
-        return colisMapper.toResponse(savedColis);
+        return colisMapper.toResponse(finalSavedColis);
     }
 
     @Override
@@ -111,33 +144,38 @@ public class ColisServiceImpl implements ColisService {
     }
     @Override
     @Transactional
-    public ColisResponse updateColis(String colisId, ColisRequest request) {
-        Colis colis = colisRepository.findById(colisId)
-                .orElseThrow(() -> new ResourceNotFoundException("Colis", "ID", colisId));
-        if (!colis.getClientExpediteur().getId().equals(request.getClientExpediteurId())) {
-            ClientExpediteur newExpediteur = expediteurRepository.findById(request.getClientExpediteurId())
-                    .orElseThrow(() -> new ResourceNotFoundException("ClientExpediteur", "ID", request.getClientExpediteurId()));
-            colis.setClientExpediteur(newExpediteur);
-        }
-
-        if (!colis.getDestinataire().getId().equals(request.getDestinataireId())) {
-            Destinataire newDestinataire = destinataireRepository.findById(request.getDestinataireId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Destinataire", "ID", request.getDestinataireId()));
-            colis.setDestinataire(newDestinataire);
-        }
-
-        if (!colis.getZone().getId().equals(request.getZoneId())) {
-            Zone newZone = zoneRepository.findById(request.getZoneId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Zone", "ID", request.getZoneId()));
-            colis.setZone(newZone);
-        } else {
-            colis.setLivreur(null);
-        }
-
-        colis.setDescription(request.getDescription());
-        colis.setPoids(request.getPoids());
-        return colisMapper.toResponse(colisRepository.save(colis));
+    public ColisResponse updateColis(String colisId, ColisRequest colisRequest) {
+       return null;
     }
+//    @Override
+//    @Transactional
+//    public ColisResponse updateColis(String colisId, ColisRequest request) {
+//        Colis colis = colisRepository.findById(colisId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Colis", "ID", colisId));
+//        if (!colis.getClientExpediteur().getId().equals(request.getClientExpediteurId())) {
+//            ClientExpediteur newExpediteur = expediteurRepository.findById(request.getClientExpediteurId())
+//                    .orElseThrow(() -> new ResourceNotFoundException("ClientExpediteur", "ID", request.getClientExpediteurId()));
+//            colis.setClientExpediteur(newExpediteur);
+//        }
+//
+//        if (!colis.getDestinataire().getId().equals(request.getDestinataireId())) {
+//            Destinataire newDestinataire = destinataireRepository.findById(request.getDestinataireId())
+//                    .orElseThrow(() -> new ResourceNotFoundException("Destinataire", "ID", request.getDestinataireId()));
+//            colis.setDestinataire(newDestinataire);
+//        }
+//
+//        if (!colis.getZone().getId().equals(request.getZoneId())) {
+//            Zone newZone = zoneRepository.findById(request.getZoneId())
+//                    .orElseThrow(() -> new ResourceNotFoundException("Zone", "ID", request.getZoneId()));
+//            colis.setZone(newZone);
+//        } else {
+//            colis.setLivreur(null);
+//        }
+//
+//        colis.setDescription(request.getDescription());
+//        colis.setPoids(request.getPoids());
+//        return colisMapper.toResponse(colisRepository.save(colis));
+//    }
 
     @Override
     @Transactional
@@ -183,11 +221,12 @@ public class ColisServiceImpl implements ColisService {
     }
 
     @Override
-    public List<HistoriqueLivraisonResponse> getColisHistory(String colisId) {
-        Colis colis = colisRepository.findById(colisId)
+    @Transactional
+    public Page<HistoriqueLivraisonResponse> getColisHistory(String colisId , Pageable pageable) {
+        colisRepository.findById(colisId)
                 .orElseThrow(() -> new ResourceNotFoundException("Colis", "ID", colisId));
-
-        return Collections.emptyList();
+        Page<HistoriqueLivraison> historiquePage = historiqueRepository.findByColisId(colisId, pageable);
+        return historiquePage.map(historiqueLivraisonMapper::toResponse);
     }
 
     @Override
