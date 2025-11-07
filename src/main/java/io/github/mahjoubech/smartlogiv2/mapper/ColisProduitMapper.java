@@ -13,7 +13,7 @@ public interface ColisProduitMapper {
     @Mapping(target = "colisProduitId", ignore = true)
     ColisProduit toEntity(ColisProduitRequest dto);
 
-    @Mapping(target = "colisId", source = "colisProduitId")
+    @Mapping(target = "colisProduitId", source = "colisProduitId")
     @Mapping(target = "produit", source = "produit")
     ColisProduitResponse toResponse(ColisProduit entity);
 }
