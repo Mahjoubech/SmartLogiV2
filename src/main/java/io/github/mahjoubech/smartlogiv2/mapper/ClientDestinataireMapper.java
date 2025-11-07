@@ -5,6 +5,7 @@ import io.github.mahjoubech.smartlogiv2.dto.response.detail.ClientDestinataireRe
 import io.github.mahjoubech.smartlogiv2.dto.response.basic.ClientDestinataireResponseBasic;
 import io.github.mahjoubech.smartlogiv2.model.entity.ClientExpediteur;
 import io.github.mahjoubech.smartlogiv2.model.entity.Destinataire;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -16,19 +17,27 @@ public interface ClientDestinataireMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "colis", ignore = true)
+    @Mapping(target = "email", ignore = true)
     void updateDestinataire(ClientDestinataireRequest request, @MappingTarget Destinataire entity);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "colis", ignore = true)
+    @Mapping(target = "email", ignore = true)
     void updateExpediteur(ClientDestinataireRequest request, @MappingTarget ClientExpediteur entity);
 
     ClientExpediteur toClientExpediteur(ClientDestinataireRequest dto);
     ClientDestinataireResponse toClientResponse(ClientExpediteur entity);
+    @AfterMapping
+    default void setExpediteurRole(ClientExpediteur entity, @MappingTarget ClientDestinataireResponse response) {
+        response.setRole("Expéditeur");
+    }
     Destinataire toDestinataire(ClientDestinataireRequest dto);
     ClientDestinataireResponse toDestinataireResponse(Destinataire entity);
      List<ClientDestinataireResponse> toResponseList(List<ClientExpediteur> entities);
-
-
+    @AfterMapping
+    default void setDestinataireRole(Destinataire entity, @MappingTarget ClientDestinataireResponse response) {
+        response.setRole("Destinataire");
+    }
     @Mapping(target = "nom_complet", expression = "java(entity.getNom() + \" \" + entity.getPrenom())")
      ClientDestinataireResponseBasic  toClientResponseBasic(ClientExpediteur entity);
     @Mapping(target = "nom_complet", expression = "java(entity.getNom() + \" \" + entity.getPrenom())")
