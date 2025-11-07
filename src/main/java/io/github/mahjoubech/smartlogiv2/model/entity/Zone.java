@@ -3,6 +3,7 @@ package io.github.mahjoubech.smartlogiv2.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Entity
@@ -21,4 +22,12 @@ public class Zone {
     private  String codePostal;
     @OneToMany(mappedBy = "zone")
     private Set<Colis> colis;
+    @Column(name = "date_creation", nullable = false, updatable = false)
+    private ZonedDateTime dateCreation;
+    @PrePersist
+    public void prePersist() {
+        if (dateCreation == null) {
+            dateCreation = ZonedDateTime.now();
+        }
+    }
 }
