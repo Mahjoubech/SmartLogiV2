@@ -1,9 +1,6 @@
 package io.github.mahjoubech.smartlogiv2.dto.request;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -14,11 +11,12 @@ public class ProduitRequest {
     @NotBlank(message = "La catégorie du produit est obligatoire")
     private String categorie;
     @NotNull(message = "Le poids du produit est obligatoire")
-    @Size(min = 1, max = 70)
+    @DecimalMin(value = "0.5", message = "Le poids doit être supérieur à 0.5 kg.")
+    @DecimalMax(value = "70.5", message = "Le poids doit être inférieur à 70.5 kg.")
+
     private Double poids;
     @NotNull(message = "Le prix du produit est obligatoire")
     @Min(value = 0)
     private BigDecimal prix;
-    @NotNull(message = "Les informations du colis sont obligatoires")
     private ColisProduitRequest ColisProduit;
 }
