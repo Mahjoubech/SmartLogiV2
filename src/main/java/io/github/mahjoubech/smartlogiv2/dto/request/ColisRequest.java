@@ -1,8 +1,7 @@
 package io.github.mahjoubech.smartlogiv2.dto.request;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import io.github.mahjoubech.smartlogiv2.model.entity.Produit;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.util.List;
@@ -15,20 +14,19 @@ public class ColisRequest {
     @NotBlank(message = "L'adresse est obligatoire.")
     private String description;
     @NotBlank(message = "La priorité est obligatoire.")
+    @Pattern(regexp = "URGENT|NORMAL|BASIQUE" , message = "La priorité doit être URGENT, NORMAL ou BASIQUE.")
     private String priorite;
 
     @NotBlank(message = "La ville de destination est obligatoire.")
     private String villeDestination;
-
-    // Foreign Keys li khass l'Client y3tihom
+    @Email
     @NotBlank(message = "L'expéditeur est obligatoire.")
-    private String clientExpediteurId;
-
+    private String clientExpediteurEmail;
+    @Email
     @NotBlank(message = "Le destinataire est obligatoire.")
-    private String destinataireId;
-
-    @NotBlank(message = "La zone de destination est obligatoire.")
-    private String zoneId;
+    private String destinataireEmail;
+    @NotBlank(message = "Le code postal est obligatoire.")
+    private String codePostal;
     @NotNull(message = "La liste des produits est obligatoire.")
-    private List<ColisProduitRequest> produits;
+    private List<ProduitRequest> produits;
 }
