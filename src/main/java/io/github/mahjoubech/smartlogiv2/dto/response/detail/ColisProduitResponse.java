@@ -6,7 +6,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 @Data
 public class ColisProduitResponse {
-    private ColisProduitId colisId;
+    private ColisProduitId colisProduitId;
     private ProduitResponse produit;
     private Integer quantite;
     private BigDecimal prixUnitaire;

@@ -1,5 +1,6 @@
 package io.github.mahjoubech.smartlogiv2.dto.request;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,11 +14,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ColisProduitRequest {
-    @NotBlank(message = "L'ID du produit est obligatoire.")
-    private String produitId;
-
-    @NotNull
-    @Min(value = 1)
+    @NotNull(message = "Le produit ne peut pas être nul.")
+    @Min(value = 1 , message = "La quantité doit être comprise entre 1 et 20.")
+    @Max(value = 20 ,message = "La quantité doit être comprise entre 1 et 20.")
     private Integer quantite;
 
 }
