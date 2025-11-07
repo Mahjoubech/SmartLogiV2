@@ -172,7 +172,6 @@ public class ColisServiceImpl implements ColisService {
             throw new ValidationException("Impossible de modifier les détails du colis. Le statut actuel est: " + colis.getStatus());
         }
 
-        // 1. MISE À JOUR DES ENTITÉS LIÉES (Expediteur, Destinataire, Zone)
 
         ClientExpediteur expediteur = expediteurRepository.findByEmail(request.getClientExpediteurEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("ClientExpediteur", "Email", request.getClientExpediteurEmail()));
@@ -194,7 +193,6 @@ public class ColisServiceImpl implements ColisService {
                         throw new RuntimeException("Erreur lecture JSON zones", e);
                     }
                 });
-        // Mise à jour des champs principaux du colis
         colis.setClientExpediteur(expediteur);
         colis.setDestinataire(destinataire);
         colis.setZone(zone);
@@ -207,27 +205,19 @@ public class ColisServiceImpl implements ColisService {
             throw new ValidationException("Priorité invalide fournie: " + request.getPriorite());
         }
 
-        // *************************************************************************
-        // FIX PRINCIPAL: GESTION DE L'UPSERT DES PRODUITS ET ASSOCIATIONS
-        // *************************************************************************
-
-        // Set temporaire pour contenir les associations mises à jour/créées
         Set<ColisProduit> produitsUpdated = new HashSet<>();
 
         if (request.getProduits() != null && !request.getProduits().isEmpty()) {
             for (ProduitRequest produitRequest : request.getProduits()) {
 
-                // 1. FIND OR CREATE/UPDATE de l'entité Produit (les détails du produit peuvent changer)
                 Produit produitEntity = produitRepository.findByNomIgnoreCase(produitRequest.getNom())
                         .map(existingProduit -> {
-                            // UPDATE de l'entité Produit si elle existe
                             existingProduit.setCategorie(produitRequest.getCategorie());
                             existingProduit.setPoids(produitRequest.getPoids());
                             existingProduit.setPrix(produitRequest.getPrix());
                             return produitRepository.save(existingProduit);
                         })
                         .orElseGet(() -> {
-                            // CREATE d'une nouvelle entité Produit
                             Produit newProduit = new Produit();
                             newProduit.setNom(produitRequest.getNom());
                             newProduit.setCategorie(produitRequest.getCategorie());
@@ -236,22 +226,16 @@ public class ColisServiceImpl implements ColisService {
                             return produitRepository.save(newProduit);
                         });
 
-                // 2. Préparation de l'ID de l'association (Clé Composée)
                 ColisProduitId associationId = new ColisProduitId();
                 associationId.setColisId(colis.getId());
                 associationId.setProduitId(produitEntity.getId());
 
-                // 3. FIND OR CREATE/UPDATE de l'ASSOCIATION ColisProduit
-
                 ColisProduit colisProduit = colisProduitRepository.findById(associationId)
                         .map(existingAssociation -> {
-                            // ✅ UPSERT: L'association existe, on met à jour la quantité
                             existingAssociation.setQuantite(produitRequest.getColisProduit().getQuantite());
-                            // On garde la même instance
                             return existingAssociation;
                         })
                         .orElseGet(() -> {
-                            // ✅ UPSERT: L'association n'existe pas, on la crée
                             ColisProduit newAssociation = new ColisProduit();
                             newAssociation.setColis(colis);
                             newAssociation.setProduit(produitEntity);
@@ -261,7 +245,6 @@ public class ColisServiceImpl implements ColisService {
                             return newAssociation;
                         });
 
-                // 4. Calcul du prix total et ajout
                 java.math.BigDecimal prixTotal = produitEntity.getPrix().multiply(java.math.BigDecimal.valueOf(colisProduit.getQuantite()));
                 colisProduit.setPrixUnitaire(prixTotal);
 
