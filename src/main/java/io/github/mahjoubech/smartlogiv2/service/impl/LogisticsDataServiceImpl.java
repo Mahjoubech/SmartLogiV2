@@ -129,7 +129,6 @@ public class LogisticsDataServiceImpl implements LogisticsDataService {
     @Transactional
     public ProduitResponse createProduit(ProduitRequest request) {
         Produit produit = produitMapper.toEntity(request);
-        // Tqdr tzid hna Anti-Duplication check 3la nom
         return produitMapper.toResponse(produitRepository.save(produit));
     }
 
