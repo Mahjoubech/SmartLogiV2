@@ -417,27 +417,26 @@ public class ColisServiceImpl implements ColisService {
 
         return colisMapper.toResponse(colisRepository.save(colis));
     }
-
     @Override
-    public List<ColisResponse> getDelayedOrHighPriorityColis() {
-        ZonedDateTime dateLimite = ZonedDateTime.now().minusHours(48);
-
-        PrioriteStatus highPriority = PrioriteStatus.URGENT;
-
-        List<Colis> priorityColis = colisRepository.findByPrioriteOrDelayed(highPriority, dateLimite);
-
-        return priorityColis.stream()
-                .map(colisMapper::toResponse)
-                .collect(Collectors.toList());
+    @Transactional
+    public List<Map<String, Object>> getDetailedColisSummary(String groupByField) {
+        if ("livreur".equalsIgnoreCase(groupByField)) {
+            return colisRepository.calculateSummaryByLivreur();
+        }
+        if ("zone".equalsIgnoreCase(groupByField)) {
+            return colisRepository.calculateSummaryByZone();
+        }
+        throw new ValidationException("Le regroupement par champ '" + groupByField + "' n'est pas supporté (livreur ou zone sont acceptés).");
     }
 
     @Override
-    public Double calculateTotalWeightByZone(String zoneId) {
-        zoneRepository.findById(zoneId)
-                .orElseThrow(() -> new ResourceNotFoundException("Zone", "ID", zoneId));
+    @Transactional
+    public List<ColisResponse> getDelayedOrHighPriorityColis(ZonedDateTime dateLimiteCheck) {
 
-        Double totalWeight = colisRepository.sumPoidsByZoneId(zoneId);
-
-        return totalWeight != null ? totalWeight : 0.0;
+        PrioriteStatus highPriority = PrioriteStatus.URGENT;
+        List<Colis> delayedColis = colisRepository.findByPrioriteOrDelayed(highPriority, dateLimiteCheck);
+        return delayedColis.stream()
+                .map(colisMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +31,6 @@ public interface ColisRepository extends JpaRepository<Colis,String> , JpaSpecif
             @Param("priorite") PrioriteStatus priorite,
             @Param("dateLimite") ZonedDateTime dateLimite
     );
-    @Query("SELECT SUM(c.poids) FROM Colis c WHERE c.zone.id = :zoneId")
-    Double sumPoidsByZoneId(@Param("zoneId") String zoneId);
     @Query("SELECT c FROM Colis c WHERE " +
             "c.poids = :poids AND " +
             "c.status = :status AND " +
@@ -43,5 +42,21 @@ public interface ColisRepository extends JpaRepository<Colis,String> , JpaSpecif
             @Param("villeDestination") String villeDestination,
             @Param("prioriteStatus") PrioriteStatus prioriteStatus
     );
+    @Query("SELECT c.livreur.id AS livreurId, SUM(c.poids) AS totalPoids, COUNT(c.id) AS totalColis " +
+            "FROM Colis c " +
+            "WHERE c.livreur.id IS NOT NULL " +
+            "GROUP BY c.livreur.id")
+    List<Map<String, Object>> calculateSummaryByLivreur();
+    @Query("SELECT c.zone.id AS zoneId, SUM(c.poids) AS totalPoids, COUNT(c.id) AS totalColis " +
+            "FROM Colis c " +
+            "WHERE c.zone.id IS NOT NULL " +
+            "GROUP BY c.zone.id")
+    List<Map<String, Object>> calculateSummaryByZone();
+
+    @Query("SELECT c FROM Colis c WHERE c.prioriteStatus = :priorite " +
+            "OR (c.status NOT IN ('LIVRE', 'ANNULE') AND c.dateCreation < :dateLimiteCheck)")
+    List<Colis> findDelayedOrHighPriorityColis(
+            @Param("now") ZonedDateTime now,
+            @Param("hautePriorite") PrioriteStatus hautePriorite);
 }
 
