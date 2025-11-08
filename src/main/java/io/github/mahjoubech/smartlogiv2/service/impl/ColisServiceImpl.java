@@ -376,7 +376,7 @@ public class ColisServiceImpl implements ColisService {
 
         List<Map<String, Object>> results;
 
-        if ("statut".equalsIgnoreCase(groupByField)) {
+        if ("status".equalsIgnoreCase(groupByField)) {
             results = colisRepository.countColisByStatut();
         } else {
             throw new ValidationException("Le regroupement par champ '" + groupByField + "' n'est pas supporté.");
