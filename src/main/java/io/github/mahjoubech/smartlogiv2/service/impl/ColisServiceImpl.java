@@ -417,20 +417,6 @@ public class ColisServiceImpl implements ColisService {
 
         return colisMapper.toResponse(colisRepository.save(colis));
     }
-
-    @Override
-    public List<ColisResponse> getDelayedOrHighPriorityColis() {
-        ZonedDateTime dateLimite = ZonedDateTime.now().minusHours(48);
-
-        PrioriteStatus highPriority = PrioriteStatus.URGENT;
-
-        List<Colis> priorityColis = colisRepository.findByPrioriteOrDelayed(highPriority, dateLimite);
-
-        return priorityColis.stream()
-                .map(colisMapper::toResponse)
-                .collect(Collectors.toList());
-    }
-
     @Override
     @Transactional
     public List<Map<String, Object>> getDetailedColisSummary(String groupByField) {
@@ -441,5 +427,16 @@ public class ColisServiceImpl implements ColisService {
             return colisRepository.calculateSummaryByZone();
         }
         throw new ValidationException("Le regroupement par champ '" + groupByField + "' n'est pas supporté (livreur ou zone sont acceptés).");
+    }
+
+    @Override
+    @Transactional
+    public List<ColisResponse> getDelayedOrHighPriorityColis(ZonedDateTime dateLimiteCheck) {
+
+        PrioriteStatus highPriority = PrioriteStatus.URGENT;
+        List<Colis> delayedColis = colisRepository.findByPrioriteOrDelayed(highPriority, dateLimiteCheck);
+        return delayedColis.stream()
+                .map(colisMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }
