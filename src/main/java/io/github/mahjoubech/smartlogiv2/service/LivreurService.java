@@ -15,6 +15,5 @@ public interface LivreurService {
     void deleteLivreur(String livreurId);
     Page<ColisResponse> getAssignedColis( String livreurId, Pageable pageable);
     Page<LivreurColisResponse> getLivreurColisCounts(Pageable pageable);
-    // Rechercher un livreur par mot-clé (nom, téléphone, etc.)
     Page<LivreurResponse> searchLivreurs(String keyword, Pageable pageable);
 }

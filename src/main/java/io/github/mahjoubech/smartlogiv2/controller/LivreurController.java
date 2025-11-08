@@ -1,6 +1,7 @@
 package io.github.mahjoubech.smartlogiv2.controller;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.LivreurRequest;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.ColisResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.LivreurResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.basic.LivreurColisResponse;
 import io.github.mahjoubech.smartlogiv2.service.LivreurService;
@@ -69,5 +70,12 @@ public class LivreurController {
     public ResponseEntity<Page<LivreurColisResponse>> getLivreurColisCounts(Pageable pageable) {
         Page<LivreurColisResponse> result = livreurService.getLivreurColisCounts(pageable);
         return ResponseEntity.ok(result);
+    }
+    @GetMapping("/{livreurId}/colis")
+    public ResponseEntity<Page<ColisResponse>> getAssignedColis(
+            @PathVariable String livreurId,
+            Pageable pageable) {
+        Page<ColisResponse> colisPage = livreurService.getAssignedColis(livreurId, pageable);
+        return ResponseEntity.ok(colisPage);
     }
 }
