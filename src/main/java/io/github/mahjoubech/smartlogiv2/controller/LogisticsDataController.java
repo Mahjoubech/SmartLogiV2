@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -90,6 +91,11 @@ public class LogisticsDataController {
     @GetMapping("/colis/summary")
     public ResponseEntity<Map<String, Long>> getColisSummary(@RequestParam String groupByField) {
         Map<String, Long> summary = colisService.getColisSummary(groupByField);
+        return ResponseEntity.ok(summary);
+    }
+    @GetMapping("/detailed-summary")
+    public ResponseEntity<List<Map<String, Object>>> getDetailedColisSummary(@RequestParam String groupByField) {
+        List<Map<String, Object>> summary = colisService.getDetailedColisSummary(groupByField);
         return ResponseEntity.ok(summary);
     }
 }

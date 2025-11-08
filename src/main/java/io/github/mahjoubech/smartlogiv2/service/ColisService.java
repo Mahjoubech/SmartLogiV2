@@ -26,5 +26,5 @@ public interface ColisService {
     Map<String, Long> getColisSummary(String groupByField);
     List<ColisResponse> getDelayedOrHighPriorityColis();
 
-    Double calculateTotalWeightByZone(String zoneId);
+    List<Map<String, Object>> getDetailedColisSummary(String groupByField);
 }

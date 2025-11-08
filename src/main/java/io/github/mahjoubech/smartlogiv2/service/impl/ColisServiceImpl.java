@@ -432,12 +432,14 @@ public class ColisServiceImpl implements ColisService {
     }
 
     @Override
-    public Double calculateTotalWeightByZone(String zoneId) {
-        zoneRepository.findById(zoneId)
-                .orElseThrow(() -> new ResourceNotFoundException("Zone", "ID", zoneId));
-
-        Double totalWeight = colisRepository.sumPoidsByZoneId(zoneId);
-
-        return totalWeight != null ? totalWeight : 0.0;
+    @Transactional
+    public List<Map<String, Object>> getDetailedColisSummary(String groupByField) {
+        if ("livreur".equalsIgnoreCase(groupByField)) {
+            return colisRepository.calculateSummaryByLivreur();
+        }
+        if ("zone".equalsIgnoreCase(groupByField)) {
+            return colisRepository.calculateSummaryByZone();
+        }
+        throw new ValidationException("Le regroupement par champ '" + groupByField + "' n'est pas supporté (livreur ou zone sont acceptés).");
     }
 }
