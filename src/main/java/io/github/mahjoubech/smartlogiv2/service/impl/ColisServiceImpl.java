@@ -16,6 +16,7 @@ import io.github.mahjoubech.smartlogiv2.model.enums.ColisStatus;
 import io.github.mahjoubech.smartlogiv2.model.enums.PrioriteStatus;
 import io.github.mahjoubech.smartlogiv2.repository.*;
 import io.github.mahjoubech.smartlogiv2.service.ColisService;
+import io.github.mahjoubech.smartlogiv2.service.EmailService;
 import io.github.mahjoubech.smartlogiv2.specs.ColisSpecification;
 import io.github.mahjoubech.smartlogiv2.utils.ColisProduitId;
 import jakarta.transaction.Transactional;
@@ -49,6 +50,7 @@ public class ColisServiceImpl implements ColisService {
     private  final ColisProduitRepository colisProduitRepository;
     private  final HistoriqueLivraisonMapper historiqueLivraisonMapper;
     private final ColisMapper colisMapper;
+    private final EmailService emailService;
 
     private HistoriqueLivraison createInitialHistory(Colis colis, ColisStatus statut, String commentaire) {
         HistoriqueLivraison historique = new HistoriqueLivraison();
@@ -252,14 +254,8 @@ public class ColisServiceImpl implements ColisService {
             }
         }
 
-        // 5. Remplacement de la Collection pour la Persistance
-        // C'est ce bloc qui gère la suppression des anciens produits non inclus dans le request
-        // et la mise à jour/ajout des nouveaux sans ObjectDeletedException, car les objets
-        // existants ont été trouvés et mis à jour.
         colis.getProduits().clear();
         colis.getProduits().addAll(produitsUpdated);
-
-        // 6. Sauvegarde et retour
         return colisMapper.toResponse(colisRepository.save(colis));
     }
     @Override
@@ -297,8 +293,20 @@ public class ColisServiceImpl implements ColisService {
 
             HistoriqueLivraison newHistory = createInitialHistory(colis, newStatus, statusRequest.getCommentaire());
             historiqueRepository.save(newHistory);
+            Colis updatedColis = colisRepository.save(colis);
+            String subject = "Mise à jour du colis " + colisId + ": Statut " + newStatus.name();
+            String bodyDes = String.format(
+                    "Bonjour Mr (%s),\n\nLe statut de votre colis (%s) (%s) a été mis à jour à: %s.\nCommentaire: %s",
+                    updatedColis.getDestinataire().getNom(),updatedColis.getClientExpediteur().getPrenom()  ,colisId, newStatus.name(), statusRequest.getCommentaire()
+            );
+            String bodyExp = String.format(
+                    "Bonjour Mr (%s),\n\nLe statut de votre colis (%s) (%s) a été mis à jour à: %s.\nCommentaire: %s",
+                    updatedColis.getClientExpediteur().getNom() ,updatedColis.getClientExpediteur().getPrenom()  ,colisId, newStatus.name(), statusRequest.getCommentaire()
+            );
+            emailService.sendNotification(updatedColis.getDestinataire().getEmail(), subject, bodyDes);
+            emailService.sendNotification(updatedColis.getClientExpediteur().getEmail(), subject, bodyExp);
+           return colisMapper.toResponse(updatedColis);
 
-            return colisMapper.toResponse(colisRepository.save(colis));
 
         } catch (IllegalArgumentException e) {
             throw new ValidationException("Statut invalide fourni: " + statusRequest.getStatut() + ". Valeurs possibles: " + ColisStatus.getAllowedValues());
@@ -369,6 +377,7 @@ public class ColisServiceImpl implements ColisService {
     }
 
     @Override
+    @Transactional
     public Map<String, Long> getColisSummary(String groupByField) {
         if (groupByField == null || groupByField.isEmpty()) {
             throw new ValidationException("Le champ de regroupement (statut, zoneId, etc.) est obligatoire.");
@@ -376,7 +385,7 @@ public class ColisServiceImpl implements ColisService {
 
         List<Map<String, Object>> results;
 
-        if ("statut".equalsIgnoreCase(groupByField)) {
+        if ("status".equalsIgnoreCase(groupByField)) {
             results = colisRepository.countColisByStatut();
         } else {
             throw new ValidationException("Le regroupement par champ '" + groupByField + "' n'est pas supporté.");

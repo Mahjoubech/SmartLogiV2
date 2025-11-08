@@ -4,6 +4,7 @@ import io.github.mahjoubech.smartlogiv2.dto.request.ProduitRequest;
 import io.github.mahjoubech.smartlogiv2.dto.request.ZoneRequest;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.ProduitResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.ZoneResponse;
+import io.github.mahjoubech.smartlogiv2.service.ColisService;
 import io.github.mahjoubech.smartlogiv2.service.LogisticsDataService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +14,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v4/gestion")
 @RequiredArgsConstructor
 public class LogisticsDataController {
     private final LogisticsDataService logisticsDataService;
+    private final ColisService colisService;
 
     @PostMapping("/zone")
     public ResponseEntity<ZoneResponse> createZone(@Valid @RequestBody ZoneRequest request){
@@ -82,5 +86,10 @@ public class LogisticsDataController {
     public ResponseEntity<String> deleteDuplicateProducts() {
         logisticsDataService.deleteDuplicateProducts();
         return ResponseEntity.ok("Nettoyage des produits dupliqués effectué avec succès.");
+    }
+    @GetMapping("/colis/summary")
+    public ResponseEntity<Map<String, Long>> getColisSummary(@RequestParam String groupByField) {
+        Map<String, Long> summary = colisService.getColisSummary(groupByField);
+        return ResponseEntity.ok(summary);
     }
 }
