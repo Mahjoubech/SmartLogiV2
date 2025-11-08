@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
@@ -51,5 +52,11 @@ public interface ColisRepository extends JpaRepository<Colis,String> , JpaSpecif
             "WHERE c.zone.id IS NOT NULL " +
             "GROUP BY c.zone.id")
     List<Map<String, Object>> calculateSummaryByZone();
+
+    @Query("SELECT c FROM Colis c WHERE c.prioriteStatus = :priorite " +
+            "OR (c.status NOT IN ('LIVRE', 'ANNULE') AND c.dateCreation < :dateLimiteCheck)")
+    List<Colis> findDelayedOrHighPriorityColis(
+            @Param("now") ZonedDateTime now,
+            @Param("hautePriorite") PrioriteStatus hautePriorite);
 }
 
