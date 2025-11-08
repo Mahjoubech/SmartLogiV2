@@ -79,9 +79,9 @@ public class LivreurServiceImpl implements LivreurService {
         return livreurMapper.toResponse(livreurRepository.save(livreur));
     }
 
-
-    @Override
     public Page<ColisResponse> getAssignedColis(String livreurId, Pageable pageable) {
+        livreurRepository.findById(livreurId)
+                .orElseThrow(() -> new ResourceNotFoundException("Livreur", "ID", livreurId));
         Page<Colis> colisPage = colisRepository.findByLivreurId(livreurId, pageable);
         return colisPage.map(colisMapper::toResponse);
     }
@@ -96,5 +96,6 @@ public class LivreurServiceImpl implements LivreurService {
     public Page<LivreurColisResponse> getLivreurColisCounts(Pageable pageable){
          return livreurRepository.getColisEvryLivreur(pageable);
     }
+
 
 }
