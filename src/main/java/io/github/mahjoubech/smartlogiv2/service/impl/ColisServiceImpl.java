@@ -254,10 +254,15 @@ public class ColisServiceImpl implements ColisService {
             }
         }
 
-        colis.getProduits().clear();
+        if (colis.getProduits() != null) {
+            colis.getProduits().clear();
+        }
+
         colis.getProduits().addAll(produitsUpdated);
+
         return colisMapper.toResponse(colisRepository.save(colis));
     }
+
     @Override
     @Transactional
     public void deleteColis(String colisId) {
