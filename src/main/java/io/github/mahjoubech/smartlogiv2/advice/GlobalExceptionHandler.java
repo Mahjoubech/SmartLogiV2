@@ -88,7 +88,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); // 400
     }
 
-    // 3. Conflict State (409) - b7al Email/Phone deja moujoudin
     @ExceptionHandler(ConflictStateException.class)
     public ResponseEntity<ApiResponse> handleConflictStateException(ConflictStateException ex){
         ApiResponse response = new ApiResponse(
@@ -99,10 +98,8 @@ public class GlobalExceptionHandler {
     }
 
 
-    // 4. GESTION dyal l'Erreurs l'akhrin (500)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGenericException(Exception ex) {
-        // DEBUG: Khass ykoun gha f'l'Environment dyal Development
         ex.printStackTrace();
 
         ApiResponse response = new ApiResponse(
