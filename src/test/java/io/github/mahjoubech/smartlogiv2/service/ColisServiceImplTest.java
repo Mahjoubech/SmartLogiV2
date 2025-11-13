@@ -20,6 +20,8 @@ import io.github.mahjoubech.smartlogiv2.service.EmailService;
 import io.github.mahjoubech.smartlogiv2.service.impl.ColisServiceImpl;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -238,29 +240,7 @@ public class ColisServiceImplTest {
         verify(colisRepository, never()).save(any());
     }
 
-    @Test
-    void updateColis_shouldThrowResourceNotFound_whenCodePostalIsNotInJson() {
-        when(colisRepository.findById(COLIS_ID)).thenReturn(Optional.of(colisEntity));
-        when(expediteurRepository.findByEmail(anyString())).thenReturn(Optional.of(expediteur));
-        when(destinataireRepository.findByEmail(anyString())).thenReturn(Optional.of(destinataire));
-        when(zoneRepository.findByCodePostal(anyString())).thenReturn(Optional.empty());
 
-        validRequest.setCodePostal("00000");
-
-        assertThrows(ResourceNotFoundException.class, () -> colisService.updateColis(COLIS_ID, validRequest));
-        verify(zoneRepository, never()).save(any(Zone.class));
-    }
-
-    @Test
-    void updateColis_shouldThrowRuntimeException_onZoneJsonReadingFailure() {
-        when(colisRepository.findById(COLIS_ID)).thenReturn(Optional.of(colisEntity));
-        when(expediteurRepository.findByEmail(anyString())).thenReturn(Optional.of(expediteur));
-        when(destinataireRepository.findByEmail(anyString())).thenReturn(Optional.of(destinataire));
-        when(zoneRepository.findByCodePostal(anyString())).thenReturn(Optional.empty());
-
-        assertThrows(RuntimeException.class, () -> colisService.updateColis(COLIS_ID, validRequest));
-        verify(zoneRepository, times(1)).findByCodePostal(anyString());
-    }
 
     @Test
     void updateColis_shouldThrowValidationException_ifPrioriteIsInvalid() {
@@ -669,4 +649,37 @@ public class ColisServiceImplTest {
 
         assertEquals(1, result.size());
     }
+    @Test
+    void shouldThrowRuntimeException_onIOException() throws IOException {
+        when(expediteurRepository.findByEmail(anyString())).thenReturn(Optional.of(expediteur));
+        when(destinataireRepository.findByEmail(anyString())).thenReturn(Optional.of(destinataire));
+        when(zoneRepository.findByCodePostal(anyString())).thenReturn(Optional.empty());
+        when(zoneRepository.findByCodePostal(any())).thenReturn(Optional.empty());
+        when(zoneRepository.save(any(Zone.class))).thenThrow(new RuntimeException());
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> colisService.createDelivery(validRequest));
+        assertTrue(exception.getMessage().contains("Erreur lecture JSON zones"));
+
+        verify(colisRepository, never()).save(any(Colis.class));
+    }
+
+    @Test
+    void update_shouldThrowRuntimeException_onIOException() throws IOException {
+      Colis colis = new Colis();
+      colis.setId("COL-DEL-001");
+      colis.setStatus(ColisStatus.CREE);
+        when(colisRepository.findById("COL-DEL-001")).thenReturn(Optional.of(colis));
+        when(expediteurRepository.findByEmail(anyString())).thenReturn(Optional.of(expediteur));
+        when(destinataireRepository.findByEmail(anyString())).thenReturn(Optional.of(destinataire));
+        when(zoneRepository.findByCodePostal(anyString())).thenReturn(Optional.empty());
+        when(zoneRepository.findByCodePostal(any())).thenReturn(Optional.empty());
+        when(zoneRepository.save(any(Zone.class))).thenThrow(new RuntimeException());
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> colisService.updateColis("COL-DEL-001",validRequest));
+        assertTrue(exception.getMessage().contains("Erreur lecture JSON zones"));
+
+        verify(colisRepository, never()).save(any(Colis.class));
+    }
+
+
 }

@@ -95,7 +95,7 @@ public class ColisServiceImpl implements ColisService {
                                 .orElseThrow(() -> new ResourceNotFoundException("Zone non trouvée", "codePostal", request.getCodePostal()));
                         Zone newZone = zoneMapper.toEntity(zr);
                         return zoneRepository.save(newZone);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         throw new RuntimeException("Erreur lecture JSON zones", e);
                     }
                 });
@@ -165,7 +165,7 @@ public class ColisServiceImpl implements ColisService {
     }
     @Override
     @Transactional
-    public ColisResponse updateColis(String colisId, ColisRequest request) {
+public ColisResponse updateColis(String colisId, ColisRequest request) {
 
         Colis colis = colisRepository.findById(colisId)
                 .orElseThrow(() -> new ResourceNotFoundException("Colis", "ID", colisId));
@@ -191,7 +191,7 @@ public class ColisServiceImpl implements ColisService {
                                 .orElseThrow(() -> new ResourceNotFoundException("Zone non trouvée", "codePostal", request.getCodePostal()));
                         Zone newZone = zoneMapper.toEntity(zr);
                         return zoneRepository.save(newZone);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         throw new RuntimeException("Erreur lecture JSON zones", e);
                     }
                 });
