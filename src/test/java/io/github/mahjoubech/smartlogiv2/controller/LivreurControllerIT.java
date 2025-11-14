@@ -2,9 +2,6 @@ package io.github.mahjoubech.smartlogiv2.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.mahjoubech.smartlogiv2.dto.request.LivreurRequest;
-import io.github.mahjoubech.smartlogiv2.dto.response.basic.LivreurColisResponse;
-import io.github.mahjoubech.smartlogiv2.dto.response.detail.ColisResponse;
-import io.github.mahjoubech.smartlogiv2.dto.response.detail.LivreurResponse;
 import io.github.mahjoubech.smartlogiv2.model.entity.Livreur;
 import io.github.mahjoubech.smartlogiv2.repository.LivreurRepository;
 import org.junit.jupiter.api.Test;
@@ -16,10 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.UUID;
-
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -74,7 +67,7 @@ public class LivreurControllerIT {
     }
 
     @Test
-    public void createLivreur_shouldPersistAndReturnCreated() throws Exception {
+     void createLivreur_shouldPersistAndReturnCreated() throws Exception {
         LivreurRequest request = createSampleLivreurRequest();
 
         mockMvc.perform(post("/api/v1/gestionner/livreur")
@@ -91,7 +84,7 @@ public class LivreurControllerIT {
     }
 
     @Test
-    public void getAllLivreurs_shouldReturnPagedList() throws Exception {
+     void getAllLivreurs_shouldReturnPagedList() throws Exception {
         mockMvc.perform(get("/api/v1/gestionner/livreur")
                         .param("page", "0")
                         .param("size", "10")
@@ -102,7 +95,7 @@ public class LivreurControllerIT {
     }
 
     @Test
-    public void getLivreurById_shouldReturnDetails() throws Exception {
+     void getLivreurById_shouldReturnDetails() throws Exception {
         LivreurRequest request = createSampleLivreurRequest();
         String responseContent = mockMvc.perform(post("/api/v1/gestionner/livreur")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -117,7 +110,7 @@ public class LivreurControllerIT {
     }
 
     @Test
-    public void updateLivreur_shouldUpdateAndReturnOk() throws Exception {
+     void updateLivreur_shouldUpdateAndReturnOk() throws Exception {
         LivreurRequest request = createSampleLivreurRequest();
         String responseContent = mockMvc.perform(post("/api/v1/gestionner/livreur")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -135,7 +128,7 @@ public class LivreurControllerIT {
     }
 
     @Test
-    public void deleteLivreur_shouldDeleteAndReturnOk() throws Exception {
+     void deleteLivreur_shouldDeleteAndReturnOk() throws Exception {
         LivreurRequest request = createSampleLivreurRequest();
         String responseContent = mockMvc.perform(post("/api/v1/gestionner/livreur")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -149,7 +142,7 @@ public class LivreurControllerIT {
     }
 
     @Test
-    public void searchLivreurs_shouldReturnFilteredPage() throws Exception {
+     void searchLivreurs_shouldReturnFilteredPage() throws Exception {
         mockMvc.perform(get("/api/v1/gestionner/livreur/search")
                         .param("keyword", "Integration")
                         .param("page", "0")
@@ -159,7 +152,7 @@ public class LivreurControllerIT {
     }
 
     @Test
-    public void getLivreurColisCounts_shouldReturnPage() throws Exception {
+     void getLivreurColisCounts_shouldReturnPage() throws Exception {
         mockMvc.perform(get("/api/v1/gestionner/livreur/counts")
                         .param("page", "0")
                         .param("size", "10"))
@@ -168,7 +161,7 @@ public class LivreurControllerIT {
     }
 
     @Test
-    public void getAssignedColis_shouldReturnPagedList() throws Exception {
+     void getAssignedColis_shouldReturnPagedList() throws Exception {
         LivreurRequest request = createSampleLivreurRequest();
         String responseContent = mockMvc.perform(post("/api/v1/gestionner/livreur")
                         .contentType(MediaType.APPLICATION_JSON)

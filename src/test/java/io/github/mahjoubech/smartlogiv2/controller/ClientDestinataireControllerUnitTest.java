@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -30,7 +29,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -68,7 +66,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void createExpediteur_should_create_and_return_created_status() throws Exception {
+     void createExpediteur_should_create_and_return_created_status() throws Exception {
         ClientDestinataireRequest request = createSampleClientRequest();
         String clientId = "12731273182";
         ClientDestinataireResponse response = createSampleClientResponse(clientId, "Expéditeur");
@@ -83,7 +81,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void createExpediteur_should_return_bad_request_when_validation_fails() throws Exception {
+     void createExpediteur_should_return_bad_request_when_validation_fails() throws Exception {
         ClientDestinataireRequest request = new ClientDestinataireRequest();
         mockMvc.perform(post("/api/v3/clients/register/expediteur")
                         .contentType("application/json")
@@ -92,7 +90,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void createExpediteur_should_validate_email_format() throws Exception {
+     void createExpediteur_should_validate_email_format() throws Exception {
         ClientDestinataireRequest request = createSampleClientRequest();
         request.setEmail("invalid-email");
 
@@ -103,7 +101,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void createDestinataire_should_create_and_return_created_status() throws Exception {
+     void createDestinataire_should_create_and_return_created_status() throws Exception {
         ClientDestinataireRequest request = createSampleClientRequest();
         String clientId = UUID.randomUUID().toString();
         ClientDestinataireResponse response = createSampleClientResponse(clientId, "DESTINATAIRE");
@@ -121,7 +119,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void createDestinataire_should_return_bad_request_when_validation_fails() throws Exception {
+     void createDestinataire_should_return_bad_request_when_validation_fails() throws Exception {
         ClientDestinataireRequest request = new ClientDestinataireRequest();
         request.setEmail("test@example.com"); // Only email, missing other required fields
 
@@ -132,7 +130,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void getClientById_should_return_client_details() throws Exception {
+     void getClientById_should_return_client_details() throws Exception {
         String clientId = UUID.randomUUID().toString();
         ClientDestinataireResponse response = createSampleClientResponse(clientId, "EXPEDITEUR");
 
@@ -147,7 +145,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void updateClient_should_update_and_return_ok() throws Exception {
+     void updateClient_should_update_and_return_ok() throws Exception {
         String clientId = UUID.randomUUID().toString();
         ClientDestinataireRequest request = createSampleClientRequest();
         request.setNom("Martin");
@@ -170,7 +168,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void updateClient_should_return_bad_request_when_validation_fails() throws Exception {
+     void updateClient_should_return_bad_request_when_validation_fails() throws Exception {
         String clientId = UUID.randomUUID().toString();
         ClientDestinataireRequest request = new ClientDestinataireRequest();
         // Missing required fields
@@ -182,7 +180,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void deleteClient_should_delete_and_return_success_message() throws Exception {
+     void deleteClient_should_delete_and_return_success_message() throws Exception {
         String clientId = UUID.randomUUID().toString();
 
         doNothing().when(clientDestinataireService).deleteClient(clientId);
@@ -194,7 +192,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void getAllClients_should_return_paginated_list() throws Exception {
+     void getAllClients_should_return_paginated_list() throws Exception {
         Pageable pageable = PageRequest.of(0, 10);
         List<ClientDestinataireResponse> clientList = List.of(
                 createSampleClientResponse(UUID.randomUUID().toString(), "EXPEDITEUR"),
@@ -217,7 +215,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void getAllClients_should_support_ascending_sort() throws Exception {
+     void getAllClients_should_support_ascending_sort() throws Exception {
         Pageable pageable = PageRequest.of(0, 10);
         List<ClientDestinataireResponse> clientList = List.of(
                 createSampleClientResponse(UUID.randomUUID().toString(), "EXPEDITEUR")
@@ -236,7 +234,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void searchClients_should_return_filtered_results_by_keyword() throws Exception {
+     void searchClients_should_return_filtered_results_by_keyword() throws Exception {
         Pageable pageable = PageRequest.of(0, 10);
         List<ClientDestinataireResponse> clientList = List.of(
                 createSampleClientResponse(UUID.randomUUID().toString(), "EXPEDITEUR")
@@ -256,7 +254,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void searchClients_should_search_by_email() throws Exception {
+     void searchClients_should_search_by_email() throws Exception {
         Pageable pageable = PageRequest.of(0, 10);
         List<ClientDestinataireResponse> clientList = List.of(
                 createSampleClientResponse(UUID.randomUUID().toString(), "DESTINATAIRE")
@@ -276,7 +274,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void searchClients_should_search_by_telephone() throws Exception {
+     void searchClients_should_search_by_telephone() throws Exception {
         Pageable pageable = PageRequest.of(0, 10);
         List<ClientDestinataireResponse> clientList = List.of(
                 createSampleClientResponse(UUID.randomUUID().toString(), "EXPEDITEUR")
@@ -296,7 +294,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void createExpediteur_should_validate_all_required_fields() throws Exception {
+     void createExpediteur_should_validate_all_required_fields() throws Exception {
         ClientDestinataireRequest request = new ClientDestinataireRequest();
         request.setNom(""); // Blank nom
         request.setPrenom(""); // Blank prenom
@@ -311,7 +309,7 @@ public class ClientDestinataireControllerUnitTest {
     }
 
     @Test
-    public void getAllClients_should_use_default_pagination_params() throws Exception {
+     void getAllClients_should_use_default_pagination_params() throws Exception {
         Pageable pageable = PageRequest.of(0, 10);
         List<ClientDestinataireResponse> clientList = List.of(
                 createSampleClientResponse(UUID.randomUUID().toString(), "EXPEDITEUR")

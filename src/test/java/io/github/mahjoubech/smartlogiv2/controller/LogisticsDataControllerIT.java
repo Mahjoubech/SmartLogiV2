@@ -34,7 +34,7 @@ public class LogisticsDataControllerIT {
 
 
     @Test
-    public void createZone_should_return_zone_created() throws Exception {
+     void createZone_should_return_zone_created() throws Exception {
         ZoneRequest zoneRequest = new ZoneRequest();
         zoneRequest.setNom("Zone Test");
         zoneRequest.setCodePostal("75000");
@@ -48,7 +48,7 @@ public class LogisticsDataControllerIT {
     }
 
     @Test
-    public void updateZone_should_return_zone_updated() throws Exception {
+     void updateZone_should_return_zone_updated() throws Exception {
         String zoneId = createZoneAndGetId();
 
         ZoneRequest updateRequest = new ZoneRequest();
@@ -64,7 +64,7 @@ public class LogisticsDataControllerIT {
     }
 
     @Test
-    public void deleteZone_should_delete_zone_and_return_ok() throws Exception {
+     void deleteZone_should_delete_zone_and_return_ok() throws Exception {
         String zoneId = createZoneAndGetId();
 
         mockMvc.perform(delete("/api/v4/gestion/zone/{zoneId}", zoneId))
@@ -73,7 +73,7 @@ public class LogisticsDataControllerIT {
     }
 
     @Test
-    public void getZone_should_return_zone_details() throws Exception {
+     void getZone_should_return_zone_details() throws Exception {
         String zoneId = createZoneAndGetId();
 
         mockMvc.perform(get("/api/v4/gestion/zone/{zoneId}", zoneId))
@@ -82,7 +82,7 @@ public class LogisticsDataControllerIT {
     }
 
     @Test
-    public void getAllZones_should_return_paginated_zones() throws Exception {
+     void getAllZones_should_return_paginated_zones() throws Exception {
         mockMvc.perform(get("/api/v4/gestion/zone")
                         .param("page", "0")
                         .param("size", "10"))
@@ -92,7 +92,7 @@ public class LogisticsDataControllerIT {
     }
 
     @Test
-    public void createProduit_should_return_produit_created() throws Exception {
+     void createProduit_should_return_produit_created() throws Exception {
         ProduitRequest produitRequest = new ProduitRequest();
         produitRequest.setNom("Produit Test");
         produitRequest.setCategorie("Catégorie Test");
@@ -108,7 +108,7 @@ public class LogisticsDataControllerIT {
     }
 
     @Test
-    public void updateProduit_should_return_produit_updated() throws Exception {
+     void updateProduit_should_return_produit_updated() throws Exception {
         String produitId = createProduitAndGetId();
 
         ProduitRequest updateRequest = new ProduitRequest();
@@ -126,7 +126,7 @@ public class LogisticsDataControllerIT {
     }
 
     @Test
-    public void deleteProduit_should_return_no_content() throws Exception {
+     void deleteProduit_should_return_no_content() throws Exception {
         String produitId = createProduitAndGetId();
 
         mockMvc.perform(delete("/api/v4/gestion/produit{produitId}", produitId))
@@ -134,7 +134,7 @@ public class LogisticsDataControllerIT {
     }
 
     @Test
-    public void getProduitById_should_return_produit_details() throws Exception {
+     void getProduitById_should_return_produit_details() throws Exception {
         String produitId = createProduitAndGetId();
 
         mockMvc.perform(get("/api/v4/gestion/produit/{produitId}", produitId))
@@ -143,7 +143,7 @@ public class LogisticsDataControllerIT {
     }
 
     @Test
-    public void findAllProduits_should_return_paginated_produits() throws Exception {
+     void findAllProduits_should_return_paginated_produits() throws Exception {
         mockMvc.perform(get("/api/v4/gestion/produit")
                         .param("page", "0")
                         .param("size", "10"))
@@ -152,14 +152,14 @@ public class LogisticsDataControllerIT {
     }
 
     @Test
-    public void deleteDuplicateProducts_should_return_success_message() throws Exception {
+     void deleteDuplicateProducts_should_return_success_message() throws Exception {
         mockMvc.perform(post("/api/v4/gestion/produit/cleanup/duplicates"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Nettoyage des produits dupliqués effectué avec succès."));
     }
 
     @Test
-    public void getColisSummary_should_return_summary_map() throws Exception {
+     void getColisSummary_should_return_summary_map() throws Exception {
         mockMvc.perform(get("/api/v4/gestion/colis/summary")
                         .param("groupByField", "status"))
                 .andExpect(status().isOk())
@@ -167,7 +167,7 @@ public class LogisticsDataControllerIT {
     }
 
     @Test
-    public void getDetailedColisSummary_should_return_list_of_maps() throws Exception {
+     void getDetailedColisSummary_should_return_list_of_maps() throws Exception {
         mockMvc.perform(get("/api/v4/gestion/detailed-summary")
                         .param("groupByField", "livreur"))
                 .andExpect(status().isOk())
