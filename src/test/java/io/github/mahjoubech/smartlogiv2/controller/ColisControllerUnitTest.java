@@ -406,7 +406,6 @@ public class ColisControllerUnitTest {
 
         when(colisService.getAllColis(eq(expectedPageable))).thenReturn(Page.empty());
 
-        // T'nfid dyal MockMvc m3a sortDir=asc
         mockMvc.perform(get("/api/v2/colis")
                         .param("page", "0")
                         .param("size", "10")
