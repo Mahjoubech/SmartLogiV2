@@ -38,7 +38,7 @@ public class ClientDestinataireController {
     @PostMapping("/register/expediteur")
     public ResponseEntity<ClientDestinataireResponse> createExpediteur(@Valid @RequestBody ClientDestinataireRequest request) {
         ClientDestinataireResponse response = clientDestinataireService.createExpediteur(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body( response );
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Operation(summary = "Enregistrer un nouveau destinataire",
