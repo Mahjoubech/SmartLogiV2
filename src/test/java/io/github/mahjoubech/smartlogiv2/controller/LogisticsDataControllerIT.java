@@ -8,23 +8,22 @@ import io.github.mahjoubech.smartlogiv2.dto.response.detail.ZoneResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Sql("/data/zones.sql")
 public class LogisticsDataControllerIT {
 
     @Autowired
@@ -50,7 +49,6 @@ public class LogisticsDataControllerIT {
 
     @Test
     public void updateZone_should_return_zone_updated() throws Exception {
-        // First create zone (integration test DB should support this)
         String zoneId = createZoneAndGetId();
 
         ZoneRequest updateRequest = new ZoneRequest();
@@ -88,6 +86,7 @@ public class LogisticsDataControllerIT {
         mockMvc.perform(get("/api/v4/gestion/zone")
                         .param("page", "0")
                         .param("size", "10"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray());
     }
