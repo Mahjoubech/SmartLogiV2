@@ -19,9 +19,9 @@ public class AlertScheduler {
     private final EmailService emailService;
     private final String MANAGER_EMAIL = "charkaouielmahjoub50@gmail.com";
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 600000)
     public void checkAndSendAlerts() {
-        ZonedDateTime dateLimiteRetard = ZonedDateTime.now().minusHours(1);
+        ZonedDateTime dateLimiteRetard = ZonedDateTime.now().minusHours(48);
         List<ColisResponse> delayedColis = colisService.getDelayedOrHighPriorityColis(dateLimiteRetard);
         if (!delayedColis.isEmpty()) {
             String subject = "🚨 ALERTE URGENTE SDMS: " + delayedColis.size() + " colis nécessitent une action immédiate.";

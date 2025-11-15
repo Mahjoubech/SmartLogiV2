@@ -46,31 +46,19 @@ public class LogisticsDataServiceImpl implements LogisticsDataService {
             throw new ConflictStateException("Zone avec code postal " + request.getCodePostal() + " existe déjà.");
         }
 
-        boolean isValidInJson = false;
         ObjectMapper mapper = new ObjectMapper();
 
         try (InputStream is = getClass().getResourceAsStream("/data/zone.json")) {
 
-            if (is == null) {
-                throw new RuntimeException("Erreur de configuration: Fichier zone.json non trouvé.");
-            }
-
             List<ZoneRequest> zonesList = Arrays.asList(mapper.readValue(is, ZoneRequest[].class));
 
-            isValidInJson = zonesList.stream()
+         zonesList.stream()
                     .anyMatch(z -> z.getCodePostal().equals(request.getCodePostal()));
-
-        } catch (IOException e) {
+            Zone zone = zoneMapper.toEntity(request);
+            return zoneMapper.toResponse(zoneRepository.save(zone));
+        } catch (Exception e) {
             throw new RuntimeException("Erreur de lecture du JSON zones.", e);
         }
-
-        if (isValidInJson) {
-            throw new  ConflictStateException("Zone avec code postal " + request.getCodePostal() + " existe déjà sur JSON file.");
-        }
-
-        Zone zone = zoneMapper.toEntity(request);
-
-        return zoneMapper.toResponse(zoneRepository.save(zone));
     }
 
     @Override
@@ -94,25 +82,22 @@ public class LogisticsDataServiceImpl implements LogisticsDataService {
         ObjectMapper mapper = new ObjectMapper();
 
         try (InputStream is = getClass().getResourceAsStream("/data/zone.json")) {
-
-            if (is == null) {
-                throw new RuntimeException("Erreur de configuration: Fichier zone.json non trouvé.");
-            }
-
             List<ZoneRequest> zonesList = Arrays.asList(mapper.readValue(is, ZoneRequest[].class));
 
             isValidInJson = zonesList.stream()
                     .anyMatch(z -> z.getCodePostal().equals(zone.getCodePostal()));
-
-        } catch (IOException e) {
+            if (isValidInJson) {
+                throw new ConflictStateException("Zone avec code postal " + request.getCodePostal() + " existe déjà sur JSON file.");
+            }
+            zoneMapper.updateEntityFromRequest(request, zone);
+            return zoneMapper.toResponse(zoneRepository.save(zone));
+        } catch (ConflictStateException e) {
+                throw e;
+        } catch (Exception e) {
             throw new RuntimeException("Erreur de lecture du JSON zones.", e);
         }
 
-        if (isValidInJson) {
-            throw new  ConflictStateException("Zone avec code postal " + request.getCodePostal() + " existe déjà sur JSON file.");
-        }
-        zoneMapper.updateEntityFromRequest(request, zone);
-        return zoneMapper.toResponse(zoneRepository.save(zone));
+
     }
 
     @Override

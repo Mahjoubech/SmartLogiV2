@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 
 
 @RestController
@@ -38,7 +38,7 @@ public class ClientDestinataireController {
     @PostMapping("/register/expediteur")
     public ResponseEntity<ClientDestinataireResponse> createExpediteur(@Valid @RequestBody ClientDestinataireRequest request) {
         ClientDestinataireResponse response = clientDestinataireService.createExpediteur(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body( response );
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Operation(summary = "Enregistrer un nouveau destinataire",

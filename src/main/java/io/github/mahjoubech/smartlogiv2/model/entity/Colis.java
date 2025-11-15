@@ -66,7 +66,7 @@ public class Colis {
     private Set<HistoriqueLivraison> historique;
 
     @OneToMany(mappedBy = "colis", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ColisProduit> produits ;
+    private Set<ColisProduit> produits = new HashSet<>();
     @PrePersist
     public void prePersist() {
         if (dateCreation == null) {
