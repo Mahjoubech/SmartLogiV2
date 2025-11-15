@@ -157,11 +157,116 @@ Ce projet suit une **architecture en couches (Layered Architecture)** basée sur
 ![JIRA Board](docs/jira.png)
 
 ---
+# Testes Unitaires, d’Intégration et Qualité du Code
+### Modernisez la logistique des colis avec une application **Spring Boot / JPA / REST API** centralisée et performante.
 
-## ✉️ Auteur
+---
+[translate:La société SmartLogi, spécialisée dans la livraison de colis à travers le Maroc, poursuit la modernisation de son système de gestion logistique avec la solution Smart Delivery Management System (SDMS).]
+
+[translate:Cette application permet la gestion complète du flux de livraison : collecte, stockage, planification, suivi, et traçabilité des colis, tout en centralisant les informations liées aux clients, livreurs, zones et priorités.]
+
+[translate:Après la mise en œuvre réussie de la première version fonctionnelle (v0.1.0), la direction technique souhaite engager une nouvelle phase de développement axée sur la fiabilité et la qualité du code.]
+
+[translate:Cette étape est essentielle avant le déploiement en environnement de préproduction.]
+
+---
+
+## 🎯 Objectifs de la Phase Qualité
+
+- [translate:Valider le bon fonctionnement des composants existants,]
+- [translate:Identifier et corriger les anomalies potentielles,]
+- [translate:Améliorer la maintenabilité et la lisibilité du code,]
+- [translate:Fournir des indicateurs concrets de qualité (taux de couverture, complexité, duplications, etc.).]
+
+---
+
+## 🧪 Stratégie de Test et Analyse
+
+| Type de test   | Cible                                       | Outils mis en oeuvre                            |
+| :------------- | :------------------------------------------| :----------------------------------------------|
+| Tests unitaires| Classes service, controllers, composants   | JUnit 5, Mockito                               |
+| Tests d’intégration | Endpoints REST, interaction couches, BDD| Spring Boot Test, MockMvc                      |
+| Analyse qualité| Code source, duplications, vulnérabilités | JaCoCo (couverture), SonarQube (analyse statique) |
+
+---
+
+## 📂 Structure du Projet
+
+```
+📁 SmartLogiV2/
+├── pom.xml
+├── src/main/java/io/github/mahjoubech/smartlogiv2/
+│   ├── SmartLogiV2Application.java
+│   ├── controller/
+│   ├── dto/
+│   ├── entity/
+│   ├── mapper/
+│   ├── repository/
+│   ├── service/
+│   └── service/impl/
+├── src/main/resources/
+│   ├── application.yml
+│   └── db/changelog/
+├── src/test/java/io/github/mahjoubech/smartlogiv2/
+│   └── (tests unitaires et intégration)
+└── docs/
+├── jacoco-report.png
+├── sonar-report.png
+├── jira-board.png
+└── postman.png
+```
+
+---
+
+## 📊 Indicateurs de Qualité et Résultats
+
+### Couverture de code par JaCoCo
+
+![JaCoCo Coverage Report](docs/jacoco.png)
+
+- **95%+** de couverture sur services critiques et contrôleurs REST  
+- Couverture assurée sur cas normaux et erreurs métiers
+
+### Analyse statique par SonarQube
+
+![SonarQube Quality Gates](docs/covrege.png)
+
+- Aucune vulnérabilité critique  
+- Faible dette technique  
+- Réduction des duplications et améliorations appliquées
+
+### Gestion du projet via Jira
+
+![Jira Board Screenshot](docs/jira2.png)
+
+- Gestion agile avec user stories  
+- Suivi des anomalies et planification des améliorations
+
+---
+
+## 🛠️ Démarrage de l’Application
+
+1. Configurer PostgreSQL (ou H2 pour tests) dans `application.yml` ou profile `test`
+2. Déployer la base avec Liquibase
+3. Compiler et lancer :
+
+   ```
+mvn clean install
+mvn spring-boot:run
+   ```
+
+4. Accéder à la documentation Swagger :
+
+   ```
+http://localhost:8080/swagger-ui/index.html
+   ```
+
+---
+
+## 📧 Contact
 
 **👤 Mahjoub Cherkaoui**
-📧 [mahjoubcherkaoui@gmail.com](mailto:mahjoubcherkaoui@gmail.com)
+📧 [mahjoubcherkaoui50@gmail.com](mailto:mahjoubcherkaoui@gmail.com)
 💼 [GitHub – Mahjoubech](https://github.com/Mahjoubech)
 
 ---
