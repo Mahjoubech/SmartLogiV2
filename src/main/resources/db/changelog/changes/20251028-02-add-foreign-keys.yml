@@ -5,6 +5,27 @@ databaseChangeLog:
       changes:
         - addForeignKeyConstraint:
             baseTableName: livreur
+            baseColumnNames: id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_livreur_user
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: client_expediteur
+            baseColumnNames: id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_client_user
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: gestionners
+            baseColumnNames: id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_gestionner_user
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: livreur
             baseColumnNames: zone_assignee_id
             referencedTableName: zone
             referencedColumnNames: id

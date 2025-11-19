@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20251117-05-make-audit-columns-nullable
+      author: Mahjoubech
+      changes:
+        - dropNotNullConstraint:
+            tableName: users
+            columnName: date_modification
+            columnDataType: TIMESTAMP WITHOUT TIME ZONE
+        - dropNotNullConstraint:
+            tableName: users
+            columnName: created_by
+            columnDataType: VARCHAR(100)
+        - dropNotNullConstraint:
+            tableName: users
+            columnName: modified_by
+            columnDataType: VARCHAR(100)
