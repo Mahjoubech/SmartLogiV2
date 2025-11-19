@@ -1,126 +1,128 @@
-databaseChangeLog:
-  - changeSet:
-      id: 20251031-03-insert-sample-data
-      author: Mahjoubech
-      changes:
-
-        # -------------------- ZONE --------------------
-        - insert:
-            tableName: zone
-            columns:
-              - column: { name: id, valueComputed: "gen_random_uuid()" }
-              - column: { name: nom, value: "Centre Ville" }
-              - column: { name: code_postal, value: "10001" }
-              - column: { name: date_creation, valueDate: "2024-10-31T10:00:00" }
-
-        - insert:
-            tableName: zone
-            columns:
-              - column: { name: id, valueComputed: "gen_random_uuid()" }
-              - column: { name: nom, value: "Banlieue Nord" }
-              - column: { name: code_postal, value: "10002" }
-              - column: { name: date_creation, valueDate: "2024-10-31T10:05:00" }
-
-        # -------------------- CLIENT EXPEDITEUR --------------------
-        - insert:
-            tableName: client_expediteur
-            columns:
-              - column: { name: id, valueComputed: "gen_random_uuid()" }
-              - column: { name: nom, value: "Dupont" }
-              - column: { name: prenom, value: "Marie" }
-              - column: { name: email, value: "marie.dupont@example.com" }
-              - column: { name: telephone, value: "+212600000001" }
-              - column: { name: adresse, value: "Rue Hassan II, Rabat" }
-              - column: { name: date_creation, valueDate: "2024-10-31T11:00:00" }
-
-        # -------------------- DESTINATAIRE --------------------
-        - insert:
-            tableName: destinataire
-            columns:
-              - column: { name: id, valueComputed: "gen_random_uuid()" }
-              - column: { name: nom, value: "El Fassi" }
-              - column: { name: prenom, value: "Youssef" }
-              - column: { name: email, value: "youssef.elfassi@example.com" }
-              - column: { name: telephone, value: "+212600000002" }
-              - column: { name: adresse, value: "Avenue Mohammed V, Casablanca" }
-              - column: { name: date_creation, valueDate: "2024-10-31T11:05:00" }
-
-        # -------------------- LIVREUR --------------------
-        - insert:
-            tableName: livreur
-            columns:
-              - column: { name: id, valueComputed: "gen_random_uuid()" }
-              - column: { name: nom, value: "Doe" }
-              - column: { name: prenom, value: "John" }
-              - column: { name: telephone, value: "+212600000003" }
-              - column: { name: vehicule, value: "Moto YAMAHA" }
-              - column: { name: zone_assignee_id, valueComputed: "(SELECT id FROM zone WHERE nom='Centre Ville' LIMIT 1)" }
-
-        # -------------------- PRODUIT --------------------
-        - insert:
-            tableName: produit
-            columns:
-              - column: { name: id, valueComputed: "gen_random_uuid()" }
-              - column: { name: nom, value: "Smartphone Galaxy" }
-              - column: { name: categorie, value: "Electronique" }
-              - column: { name: poids, valueNumeric: 0.5 }
-              - column: { name: prix, valueNumeric: 3500.00 }
-              - column: { name: date_creation, valueDate: "2024-10-31T12:00:00" }
-
-        - insert:
-            tableName: produit
-            columns:
-              - column: { name: id, valueComputed: "gen_random_uuid()" }
-              - column: { name: nom, value: "Livre de Programmation Java" }
-              - column: { name: categorie, value: "Livres" }
-              - column: { name: poids, valueNumeric: 1.2 }
-              - column: { name: prix, valueNumeric: 250.00 }
-              - column: { name: date_creation, valueDate: "2024-10-31T12:10:00" }
-
-        # -------------------- COLIS --------------------
-        - insert:
-            tableName: colis
-            columns:
-              - column: { name: id, valueComputed: "gen_random_uuid()" }
-              - column: { name: description, value: "Colis électronique fragile" }
-              - column: { name: poids, valueNumeric: 2.5 }
-              - column: { name: statut, value: "EN_STOCK" }
-              - column: { name: priorite, value: "URGENT" }
-              - column: { name: ville_destination, value: "Casablanca" }
-              - column: { name: client_expediteur_id, valueComputed: "(SELECT id FROM client_expediteur WHERE email='marie.dupont@example.com')" }
-              - column: { name: destinataire_id, valueComputed: "(SELECT id FROM destinataire WHERE email='youssef.elfassi@example.com')" }
-              - column: { name: zone_id, valueComputed: "(SELECT id FROM zone WHERE nom='Centre Ville')" }
-              - column: { name: livreur_id, valueComputed: "(SELECT id FROM livreur WHERE nom='Doe')" }
-              - column: { name: date_creation, valueDate: "2024-10-31T13:00:00" }
-
-        # -------------------- HISTORIQUE LIVRAISON --------------------
-        - insert:
-            tableName: historique_livraison
-            columns:
-              - column: { name: id, valueComputed: "gen_random_uuid()" }
-              - column: { name: colis_id, valueComputed: "(SELECT id FROM colis LIMIT 1)" }
-              - column: { name: statut, value: "EN_STOCK" }
-              - column: { name: date_changement, valueDate: "2024-10-31T13:10:00" }
-              - column: { name: commentaire, value: "Colis pris en charge par le livreur" }
-              - column: { name: date_creation, valueDate: "2024-10-31T13:10:00" }
-
-        # -------------------- COLIS PRODUIT --------------------
-        - insert:
-            tableName: colis_produit
-            columns:
-              - column: { name: colis_id, valueComputed: "(SELECT id FROM colis LIMIT 1)" }
-              - column: { name: produit_id, valueComputed: "(SELECT id FROM produit WHERE nom='Smartphone Galaxy')" }
-              - column: { name: quantite, valueNumeric: 1 }
-              - column: { name: prix_unitaire, valueNumeric: 3500.00 }
-              - column: { name: date_ajout, valueDate: "2024-10-31T13:15:00" }
-              - column: { name: date_creation, valueDate: "2024-10-31T13:15:00" }
-
-        - insert:
-            tableName: colis_produit
-            columns:
-              - column: { name: colis_id, valueComputed: "(SELECT id FROM colis LIMIT 1)" }
-              - column: { name: produit_id, valueComputed: "(SELECT id FROM produit WHERE nom='Livre de Programmation Java')" }
-              - column: { name: quantite, valueNumeric: 2 }
-              - column: { name: prix_unitaire, valueNumeric: 250.00 }
-              - column: { name: date_ajout, valueDate: "2024-10-31T13:20:00" }
-              - column: { name: date_creation, valueDate: "2024-10-31T13:20:00" }
+#databaseChangeLog:
+#  - changeSet:
+#      id: 20251031-03-insert-sample-data
+#      author: Mahjoubech
+#      changes:
+#
+#        # -------------------- ZONE --------------------
+#        - insert:
+#            tableName: zone
+#            columns:
+#              - column: { name: id, valueComputed: "gen_random_uuid()" }
+#              - column: { name: nom, value: "Centre Ville" }
+#              - column: { name: code_postal, value: "10001" }
+#              - column: { name: date_creation, valueDate: "2024-10-31T10:00:00" }
+#
+#        - insert:
+#            tableName: zone
+#            columns:
+#              - column: { name: id, valueComputed: "gen_random_uuid()" }
+#              - column: { name: nom, value: "Banlieue Nord" }
+#              - column: { name: code_postal, value: "10002" }
+#              - column: { name: date_creation, valueDate: "2024-10-31T10:05:00" }
+#
+#        # -------------------- USERS --------------------
+#        - insert:
+#            tableName: users
+#            columns:
+#              - column: { name: id, valueComputed: "gen_random_uuid()" }
+#              - column: { name: nom, value: "Dupont" }
+#              - column: { name: prenom, value: "Marie" }
+#              - column: { name: email, value: "marie.dupont@example.com" }
+#              - column: { name: telephone, value: "+212600000001" }
+#              - column: { name: password, value: "Majjddk52"}
+#              - column: { name: role, value: "  ROLE_CLIENT" }
+#              - column: { name: date_creation, valueDate: "2024-10-31T11:00:00" }
+#        - insert:
+#            tableName: users
+#            columns:
+#              - column: { name: id, valueComputed: "gen_random_uuid()" }
+#              - column: { name: nom, value: "Cherkaoui" }
+#              - column: { name: prenom, value: "Mahjoub" }
+#              - column: { name: email, value: "mahjoub@gmail.com" }
+#              - column: { name: telephone, value: "+212645859658" }
+#              - column: { name: password, value: "Mahjoub@1230" }
+#              - column: { name: role, value: "  ROLE_MANAGER" }
+#              - column: { name: date_creation, valueDate: "2024-10-31T11:00:00" }
+#
+#        # -------------------- CLIENT --------------------
+#        - insert:
+#            tableName: client_expediteur
+#            columns:
+#              - column: { name: id, valueComputed: "(SELECT id FROM users WHERE email='marie.dupont@example.com' )" }
+#              - column: { name: adresse, value: "Avenue Mohammed V, Casablanca" }
+#        # -------------------- GESTIONNER --------------------
+#        - insert:
+#            tableName: gestionners
+#            columns:
+#              - column: { name: id, valueComputed: "(SELECT id FROM users WHERE email='mahjoub@gmail.com')" }
+#
+#
+#        # -------------------- PRODUIT --------------------
+#        - insert:
+#            tableName: produit
+#            columns:
+#              - column: { name: id, valueComputed: "gen_random_uuid()" }
+#              - column: { name: nom, value: "Smartphone Galaxy" }
+#              - column: { name: categorie, value: "Electronique" }
+#              - column: { name: poids, valueNumeric: 0.5 }
+#              - column: { name: prix, valueNumeric: 3500.00 }
+#              - column: { name: date_creation, valueDate: "2024-10-31T12:00:00" }
+#
+#        - insert:
+#            tableName: produit
+#            columns:
+#              - column: { name: id, valueComputed: "gen_random_uuid()" }
+#              - column: { name: nom, value: "Livre de Programmation Java" }
+#              - column: { name: categorie, value: "Livres" }
+#              - column: { name: poids, valueNumeric: 1.2 }
+#              - column: { name: prix, valueNumeric: 250.00 }
+#              - column: { name: date_creation, valueDate: "2024-10-31T12:10:00" }
+#
+#        # -------------------- COLIS --------------------
+#        - insert:
+#            tableName: colis
+#            columns:
+#              - column: { name: id, valueComputed: "gen_random_uuid()" }
+#              - column: { name: description, value: "Colis électronique fragile" }
+#              - column: { name: poids, valueNumeric: 2.5 }
+#              - column: { name: statut, value: "EN_STOCK" }
+#              - column: { name: priorite, value: "URGENT" }
+#              - column: { name: ville_destination, value: "Casablanca" }
+#              - column: { name: client_expediteur_id, valueComputed: "(SELECT id FROM client_expediteur WHERE email='marie.dupont@example.com')" }
+#              - column: { name: destinataire_id, valueComputed: "(SELECT id FROM destinataire WHERE email='youssef.elfassi@example.com')" }
+#              - column: { name: zone_id, valueComputed: "(SELECT id FROM zone WHERE nom='Centre Ville')" }
+#              - column: { name: livreur_id, valueComputed: "(SELECT id FROM livreur WHERE nom='Doe')" }
+#              - column: { name: date_creation, valueDate: "2024-10-31T13:00:00" }
+#
+#        # -------------------- HISTORIQUE LIVRAISON --------------------
+#        - insert:
+#            tableName: historique_livraison
+#            columns:
+#              - column: { name: id, valueComputed: "gen_random_uuid()" }
+#              - column: { name: colis_id, valueComputed: "(SELECT id FROM colis LIMIT 1)" }
+#              - column: { name: statut, value: "EN_STOCK" }
+#              - column: { name: date_changement, valueDate: "2024-10-31T13:10:00" }
+#              - column: { name: commentaire, value: "Colis pris en charge par le livreur" }
+#              - column: { name: date_creation, valueDate: "2024-10-31T13:10:00" }
+#
+#        # -------------------- COLIS PRODUIT --------------------
+#        - insert:
+#            tableName: colis_produit
+#            columns:
+#              - column: { name: colis_id, valueComputed: "(SELECT id FROM colis LIMIT 1)" }
+#              - column: { name: produit_id, valueComputed: "(SELECT id FROM produit WHERE nom='Smartphone Galaxy')" }
+#              - column: { name: quantite, valueNumeric: 1 }
+#              - column: { name: prix_unitaire, valueNumeric: 3500.00 }
+#              - column: { name: date_ajout, valueDate: "2024-10-31T13:15:00" }
+#              - column: { name: date_creation, valueDate: "2024-10-31T13:15:00" }
+#
+#        - insert:
+#            tableName: colis_produit
+#            columns:
+#              - column: { name: colis_id, valueComputed: "(SELECT id FROM colis LIMIT 1)" }
+#              - column: { name: produit_id, valueComputed: "(SELECT id FROM produit WHERE nom='Livre de Programmation Java')" }
+#              - column: { name: quantite, valueNumeric: 2 }
+#              - column: { name: prix_unitaire, valueNumeric: 250.00 }
+#              - column: { name: date_ajout, valueDate: "2024-10-31T13:20:00" }
+#              - column: { name: date_creation, valueDate: "2024-10-31T13:20:00" }
