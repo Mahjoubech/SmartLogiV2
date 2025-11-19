@@ -4,23 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Set;
-
 @Entity
 @Setter
 @Getter
 @Table(name = "livreur")
-@NoArgsConstructor
 @AllArgsConstructor
-public class Livreur {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-    @Column(name = "nom", nullable = false)
-    private String nom;
-    @Column(name = "prenom", nullable = false)
-    private String prenom;
-    @Column(name = "telephone", nullable = false, unique = true)
-    private String telephone;
+@NoArgsConstructor
+public class Livreur extends User {
+
     @Column(name = "vehicule")
     private String vehicule;
     @ManyToOne(fetch = FetchType.LAZY)

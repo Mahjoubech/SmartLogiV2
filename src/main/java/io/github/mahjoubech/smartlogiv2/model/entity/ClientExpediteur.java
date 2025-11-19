@@ -12,28 +12,10 @@ import java.util.Set;
 @Table(name = "client_expediteur")
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientExpediteur {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id ;
-    @Column(name = "nom", nullable = false)
-    private String nom ;
-    @Column(name = "prenom", nullable = false)
-    private String prenom ;
-    @Column(name = "email", nullable = false, unique = true)
-    private String email ;
-    @Column(name = "telephone", nullable = false, unique = true)
-    private String telephone ;
+public class ClientExpediteur extends User{
     @Column(name = "adresse", nullable = false)
     private String adresse ;
      @OneToMany(mappedBy = "clientExpediteur")
      private Set<Colis> colis;
-    @Column(name = "date_creation", nullable = false, updatable = false)
-    private ZonedDateTime dateCreation;
-    @PrePersist
-    public void prePersist() {
-        if (dateCreation == null) {
-            dateCreation = ZonedDateTime.now();
-        }
-    }
+
 }
