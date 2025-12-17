@@ -418,11 +418,13 @@ public class ColisServiceImplTest {
     void getColisHistory_shouldReturnPaginatedHistoriqueResponses() {
         Pageable pageable = Pageable.unpaged();
         Page<HistoriqueLivraison> historiquePage = mock(Page.class);
+
         Colis colisEntity = new Colis();
         colisEntity.setId(COLIS_ID);
 
         when(colisRepository.findById(COLIS_ID)).thenReturn(Optional.of(colisEntity));
         when(historiqueRepository.findByColisId(COLIS_ID, pageable)).thenReturn(historiquePage);
+
         when(historiquePage.map(any())).thenReturn(Page.empty());
 
         Page<HistoriqueLivraisonResponse> result = colisService.getColisHistory(COLIS_ID, pageable);

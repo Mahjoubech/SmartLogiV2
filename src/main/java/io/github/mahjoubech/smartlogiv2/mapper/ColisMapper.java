@@ -15,6 +15,7 @@ import org.mapstruct.Mapping;
         ColisProduitMapper.class
 })
 public interface ColisMapper {
+        @Mapping(target = "id", ignore = true)
         @Mapping(target = "clientExpediteur", ignore = true)
         @Mapping(target = "destinataire", ignore = true)
         @Mapping(target = "zone", ignore = true)

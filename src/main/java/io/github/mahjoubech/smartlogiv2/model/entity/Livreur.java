@@ -2,11 +2,12 @@ package io.github.mahjoubech.smartlogiv2.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
 @Entity
-@Setter
-@Getter
+@Data
+@SuperBuilder
 @Table(name = "livreur")
 @AllArgsConstructor
 @NoArgsConstructor
