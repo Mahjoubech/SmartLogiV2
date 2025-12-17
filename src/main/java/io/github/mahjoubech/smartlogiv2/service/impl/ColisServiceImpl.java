@@ -18,7 +18,6 @@ import io.github.mahjoubech.smartlogiv2.repository.*;
 import io.github.mahjoubech.smartlogiv2.service.ColisService;
 import io.github.mahjoubech.smartlogiv2.service.EmailService;
 import io.github.mahjoubech.smartlogiv2.specs.ColisSpecification;
-import io.github.mahjoubech.smartlogiv2.utils.ColisProduitId;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -109,7 +108,7 @@ public class ColisServiceImpl implements ColisService {
 
         Colis savedColis = colisRepository.save(colis);
 
-        Set<ColisProduit> produitsSet = new HashSet<>();
+        List<ColisProduit> produitsSet = new ArrayList<>();
         if (request.getProduits() != null && !request.getProduits().isEmpty()) {
             for (ProduitRequest produitRequest : request.getProduits()) {
 
@@ -131,17 +130,12 @@ public class ColisServiceImpl implements ColisService {
 
                 BigDecimal prixTotal = produitEntity.getPrix().multiply(BigDecimal.valueOf(produitRequest.getColisProduit().getQuantite()));
                 colisProduit.setPrixUnitaire(prixTotal);
-
-                ColisProduitId id = new ColisProduitId();
-                id.setColisId(savedColis.getId());
-                id.setProduitId(produitEntity.getId());
-                colisProduit.setColisProduitId(id);
                 produitsSet.add(colisProduit);
             }
         }
 
         HistoriqueLivraison historique = createInitialHistory(colis, ColisStatus.CREE, "Demande de livraison créée par l'expéditeur.");
-        Set<HistoriqueLivraison> historiqueSet = new HashSet<>();
+        List<HistoriqueLivraison> historiqueSet = new ArrayList<>();
         historiqueSet.add(historique);
         savedColis.setHistorique(historiqueSet);
         savedColis.setProduits(produitsSet);
@@ -207,7 +201,7 @@ public ColisResponse updateColis(String colisId, ColisRequest request) {
             throw new ValidationException("Priorité invalide fournie: " + request.getPriorite());
         }
 
-        Set<ColisProduit> produitsUpdated = new HashSet<>();
+        List<ColisProduit> produitsUpdated = new ArrayList<>();
 
         if (request.getProduits() != null && !request.getProduits().isEmpty()) {
             for (ProduitRequest produitRequest : request.getProduits()) {
@@ -227,11 +221,7 @@ public ColisResponse updateColis(String colisId, ColisRequest request) {
                             newProduit.setPrix(produitRequest.getPrix());
                             return produitRepository.save(newProduit);
                         });
-
-                ColisProduitId associationId = new ColisProduitId();
-                associationId.setColisId(colis.getId());
-                associationId.setProduitId(produitEntity.getId());
-
+                String associationId = colisId + "_" + produitEntity.getId();
                 ColisProduit colisProduit = colisProduitRepository.findById(associationId)
                         .map(existingAssociation -> {
                             existingAssociation.setQuantite(produitRequest.getColisProduit().getQuantite());
@@ -241,7 +231,6 @@ public ColisResponse updateColis(String colisId, ColisRequest request) {
                             ColisProduit newAssociation = new ColisProduit();
                             newAssociation.setColis(colis);
                             newAssociation.setProduit(produitEntity);
-                            newAssociation.setColisProduitId(associationId);
                             newAssociation.setQuantite(produitRequest.getColisProduit().getQuantite());
                             newAssociation.setDateAjout(ZonedDateTime.now());
                             return newAssociation;

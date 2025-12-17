@@ -2,13 +2,14 @@ package io.github.mahjoubech.smartlogiv2.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Entity
-@Setter
-@Getter
+@Data
+@SuperBuilder
 @Table(name = "client_expediteur")
 @NoArgsConstructor
 @AllArgsConstructor

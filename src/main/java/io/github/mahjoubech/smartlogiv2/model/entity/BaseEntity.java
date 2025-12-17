@@ -1,8 +1,8 @@
 package io.github.mahjoubech.smartlogiv2.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -10,11 +10,14 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@Getter
-@Setter
+@Data
+@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,11 +25,11 @@ public abstract class BaseEntity {
 
     @CreatedDate
     @Column(name = "date_creation", nullable = false, updatable = false)
-    private LocalDateTime dateCreation;
+    private ZonedDateTime dateCreation;
 
     @LastModifiedDate
     @Column(name = "date_modification")
-    private LocalDateTime dateModification;
+    private ZonedDateTime dateModification;
 
     @CreatedBy
     @Column(name = "created_by", updatable = false)

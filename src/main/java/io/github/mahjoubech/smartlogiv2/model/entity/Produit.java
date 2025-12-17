@@ -2,21 +2,20 @@ package io.github.mahjoubech.smartlogiv2.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Entity
-@Setter
-@Getter
+@Data
+@SuperBuilder
 @Table(name = "produit")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Produit {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+public class Produit extends BaseEntity{
+
     @Column(name = "nom", nullable = false)
     private String nom;
     @Column(name = "categorie", nullable = false)
@@ -27,12 +26,5 @@ public class Produit {
     private BigDecimal prix;
     @OneToMany(mappedBy = "produit")
     private Set<ColisProduit> colis;
-    @Column(name = "date_creation", nullable = false, updatable = false)
-    private ZonedDateTime dateCreation;
-    @PrePersist
-    public void prePersist() {
-        if (dateCreation == null) {
-            dateCreation = ZonedDateTime.now();
-        }
-    }
+
 }

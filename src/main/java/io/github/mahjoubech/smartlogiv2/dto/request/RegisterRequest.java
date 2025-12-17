@@ -1,14 +1,13 @@
 package io.github.mahjoubech.smartlogiv2.dto.request;
 
-import io.github.mahjoubech.smartlogiv2.model.entity.Zone;
 import io.github.mahjoubech.smartlogiv2.model.enums.Roles;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import io.github.mahjoubech.smartlogiv2.validation.annotation.ValidRegisterRequest;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
+@Data
+@ValidRegisterRequest
 public class RegisterRequest {
     @NotBlank(message = "Le nom est obligatoire.")
     private String nom;
@@ -24,6 +23,7 @@ public class RegisterRequest {
     private String confirmPassword;
     @NotBlank(message = "Le rôle est obligatoire.")
     private Roles role;
+
     private String adresse;
     private String vehicule;
     private String zoneAssigned;

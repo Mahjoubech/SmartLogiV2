@@ -7,16 +7,11 @@ import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Entity
-@Setter
-@Getter
+@Data
 @Table(name = "destinataire")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Destinataire {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @EqualsAndHashCode.Include
-    private String id;
+public class Destinataire extends BaseEntity {
     @Column(name = "nom", nullable = false)
     private String nom;
     @Column(name = "prenom", nullable = false)
@@ -29,12 +24,5 @@ public class Destinataire {
     private  String adresse;
      @OneToMany(mappedBy = "destinataire")
      private Set<Colis> colis;
-    @Column(name = "date_creation", nullable = false, updatable = false)
-    private ZonedDateTime dateCreation;
-    @PrePersist
-    public void prePersist() {
-        if (dateCreation == null) {
-            dateCreation = ZonedDateTime.now();
-        }
-    }
+
 }

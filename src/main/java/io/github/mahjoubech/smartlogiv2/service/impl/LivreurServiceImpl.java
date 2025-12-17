@@ -71,6 +71,7 @@ public class LivreurServiceImpl implements LivreurService {
             livreur.setZoneAssigned(newZone);
         }
 
+
         livreur.setNom(request.getNom());
         livreur.setPrenom(request.getPrenom());
         livreur.setTelephone(request.getTelephone());
@@ -85,7 +86,6 @@ public class LivreurServiceImpl implements LivreurService {
         Page<Colis> colisPage = colisRepository.findByLivreurId(livreurId, pageable);
         return colisPage.map(colisMapper::toResponse);
     }
-
     @Override
     public Page<LivreurResponse> searchLivreurs(String keyword, Pageable pageable) {
         Page<Livreur> livreurPage = livreurRepository.findByNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(keyword, keyword, pageable);

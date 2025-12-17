@@ -4,27 +4,22 @@ import io.github.mahjoubech.smartlogiv2.model.enums.ColisStatus;
 import io.github.mahjoubech.smartlogiv2.model.enums.PrioriteStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
-@Setter
-@Getter
+@Data
+@SuperBuilder
 @Table(name = "colis")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Colis {
-
-    @Id
-    @EqualsAndHashCode.Include
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "id", updatable = false, nullable = false, columnDefinition = "VARCHAR(255)")
-    private String id;
+public class Colis extends BaseEntity{
 
     @Column(name = "description", nullable = false)
     private String description;
@@ -43,9 +38,6 @@ public class Colis {
     @Column(name = "ville_destination", nullable = false)
     private  String villeDestination;
 
-    @Column(name = "date_creation", nullable = false, updatable = false)
-    private ZonedDateTime dateCreation;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_expediteur_id", nullable = false)
     private ClientExpediteur clientExpediteur;
@@ -63,14 +55,9 @@ public class Colis {
     private Zone zone;
 
     @OneToMany(mappedBy = "colis", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<HistoriqueLivraison> historique;
+    private List<HistoriqueLivraison> historique;
 
     @OneToMany(mappedBy = "colis", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ColisProduit> produits = new HashSet<>();
-    @PrePersist
-    public void prePersist() {
-        if (dateCreation == null) {
-            dateCreation = ZonedDateTime.now();
-        }
-    }
+    private List<ColisProduit> produits;
+
 }
