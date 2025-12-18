@@ -8,6 +8,7 @@ import io.github.mahjoubech.smartlogiv2.dto.response.basic.ColisResponseBasic;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,6 @@ public interface ColisService {
     Page<ColisResponse> findByDestinataire(String destinataireId, Pageable pageable);
 
     Map<String, Long> getColisSummary(String groupByField);
-    List<ColisResponse> getDelayedOrHighPriorityColis(ZonedDateTime dateLimiteCheck);
+    List<ColisResponse> getDelayedOrHighPriorityColis(LocalDateTime dateLimiteCheck);
     List<Map<String, Object>> getDetailedColisSummary(String groupByField);
 }

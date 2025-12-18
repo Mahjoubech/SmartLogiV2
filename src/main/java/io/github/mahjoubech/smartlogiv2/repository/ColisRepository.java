@@ -29,7 +29,7 @@ public interface ColisRepository extends JpaRepository<Colis,String> , JpaSpecif
             "OR (c.status NOT IN ('LIVRE', 'ANNULE') AND c.dateCreation < :dateLimite)")
     List<Colis> findByPrioriteOrDelayed(
             @Param("priorite") PrioriteStatus priorite,
-            @Param("dateLimite") ZonedDateTime dateLimite
+            @Param("dateLimite") LocalDateTime dateLimite
     );
     @Query("SELECT c FROM Colis c WHERE " +
             "c.poids = :poids AND " +

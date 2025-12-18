@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -25,6 +26,6 @@ public class ColisProduit extends BaseEntity {
     @Column(name = "prix_unitaire", nullable = false)
     private BigDecimal prixUnitaire;
     @Column(name = "date_ajout", nullable = false)
-    private ZonedDateTime dateAjout;
+    private LocalDateTime dateAjout;
 
 }

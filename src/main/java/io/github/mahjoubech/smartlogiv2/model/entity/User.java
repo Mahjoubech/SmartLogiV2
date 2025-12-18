@@ -20,7 +20,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract  class User extends BaseEntity implements UserDetails {
+public  class User extends BaseEntity implements UserDetails {
         @Column(name = "nom", nullable = false)
         protected String nom ;
         @Column(name = "prenom", nullable = false)

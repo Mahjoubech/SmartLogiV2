@@ -12,6 +12,6 @@ public interface ProduitMapper {
     Produit toEntity(ProduitRequest dto);
 
     ProduitResponse toResponse(Produit entity);
-    @Mapping(target = "id", ignore = true) // Matbdlich l'ID dyal l'Produit l'MOUJOUD
+    @Mapping(target = "id", ignore = true)
     void updateEntityFromRequest(ProduitRequest request, @MappingTarget Produit entity);
 }

@@ -38,6 +38,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -638,7 +639,7 @@ public class ColisServiceImplTest {
 
     @Test
     void getDelayedOrHighPriorityColis_shouldReturnColisList() {
-        ZonedDateTime dateLimiteCheck = ZonedDateTime.now().minusHours(48);
+        LocalDateTime dateLimiteCheck = LocalDateTime.now().minusHours(48);
         Colis delayedColis = new Colis();
         delayedColis.setId("COL-DEL-001");
         List<Colis> mockColisList = List.of(delayedColis);

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +22,7 @@ public class AlertScheduler {
 
     @Scheduled(fixedRate = 600000)
     public void checkAndSendAlerts() {
-        ZonedDateTime dateLimiteRetard = ZonedDateTime.now().minusHours(48);
+        LocalDateTime dateLimiteRetard = LocalDateTime.now().minusHours(48);
         List<ColisResponse> delayedColis = colisService.getDelayedOrHighPriorityColis(dateLimiteRetard);
         if (!delayedColis.isEmpty()) {
             String subject = "🚨 ALERTE URGENTE SDMS: " + delayedColis.size() + " colis nécessitent une action immédiate.";

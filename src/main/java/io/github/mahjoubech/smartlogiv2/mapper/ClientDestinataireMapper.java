@@ -1,6 +1,7 @@
 package io.github.mahjoubech.smartlogiv2.mapper;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.ClientDestinataireRequest;
+import io.github.mahjoubech.smartlogiv2.dto.request.RegisterRequest;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.ClientDestinataireResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.basic.ClientDestinataireResponseBasic;
 import io.github.mahjoubech.smartlogiv2.model.entity.ClientExpediteur;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ClientDestinataireMapper {
-
+    ClientExpediteur toClientExpediteur(RegisterRequest expediteur);
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "colis", ignore = true)
     @Mapping(target = "email", ignore = true)

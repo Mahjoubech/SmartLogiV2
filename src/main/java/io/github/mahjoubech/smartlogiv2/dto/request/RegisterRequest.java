@@ -4,6 +4,7 @@ import io.github.mahjoubech.smartlogiv2.model.enums.Roles;
 import io.github.mahjoubech.smartlogiv2.validation.annotation.ValidRegisterRequest;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -21,7 +22,7 @@ public class RegisterRequest {
     private String password;
     @NotBlank(message = "La confirmation du mot de passe est obligatoire.")
     private String confirmPassword;
-    @NotBlank(message = "Le rôle est obligatoire.")
+    @NotNull(message = "Le rôle est obligatoire.")
     private Roles role;
 
     private String adresse;
