@@ -25,11 +25,11 @@ public abstract class BaseEntity {
 
     @CreatedDate
     @Column(name = "date_creation", nullable = false, updatable = false)
-    private ZonedDateTime dateCreation;
+    private LocalDateTime dateCreation;
 
     @LastModifiedDate
     @Column(name = "date_modification")
-    private ZonedDateTime dateModification;
+    private LocalDateTime dateModification;
 
     @CreatedBy
     @Column(name = "created_by", updatable = false)

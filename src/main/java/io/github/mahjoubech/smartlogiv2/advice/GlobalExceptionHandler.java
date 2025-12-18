@@ -6,6 +6,8 @@ import io.github.mahjoubech.smartlogiv2.exception.ConflictStateException;
 import io.github.mahjoubech.smartlogiv2.dto.response.ApiResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.ApiResponseError;
 import io.github.mahjoubech.smartlogiv2.model.enums.ColisStatus; // ColisStatus howa l'Enum dyalek
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,13 +15,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     // === GESTION dyal l'Validation dyal @Valid (400) ===
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponseError> handleValidationErrors(MethodArgumentNotValidException ex){
@@ -98,14 +102,11 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse> handleGenericException(Exception ex) {
-        ex.printStackTrace();
-
-        ApiResponse response = new ApiResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Internal Server Error. Please try again later."
-        );
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); // 500
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
+        logger.error("Unexpected error occurred: {}", ex.getMessage(), ex);
+        Map<String, String> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }

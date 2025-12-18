@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
@@ -24,7 +25,7 @@ public class HistoriqueLivraison extends BaseEntity{
     @Column(name = "commentaire")
     private String commentaire;
     @Column(name = "date_changement", nullable = false)
-    private ZonedDateTime dateChangement;
+    private LocalDateTime dateChangement;
 
 
 }

@@ -1,26 +1,26 @@
-#databaseChangeLog:
-#  - changeSet:
-#      id: 20251031-03-insert-sample-data
-#      author: Mahjoubech
-#      changes:
-#
-#        # -------------------- ZONE --------------------
-#        - insert:
-#            tableName: zone
-#            columns:
-#              - column: { name: id, valueComputed: "gen_random_uuid()" }
-#              - column: { name: nom, value: "Centre Ville" }
-#              - column: { name: code_postal, value: "10001" }
-#              - column: { name: date_creation, valueDate: "2024-10-31T10:00:00" }
-#
-#        - insert:
-#            tableName: zone
-#            columns:
-#              - column: { name: id, valueComputed: "gen_random_uuid()" }
-#              - column: { name: nom, value: "Banlieue Nord" }
-#              - column: { name: code_postal, value: "10002" }
-#              - column: { name: date_creation, valueDate: "2024-10-31T10:05:00" }
-#
+databaseChangeLog:
+  - changeSet:
+      id: 20251031-03-insert-sample-data
+      author: Mahjoubech
+      changes:
+
+        # -------------------- ZONE --------------------
+        - insert:
+            tableName: zone
+            columns:
+              - column: { name: id, valueComputed: "gen_random_uuid()" }
+              - column: { name: nom, value: "Centre Ville" }
+              - column: { name: code_postal, value: "10001" }
+              - column: { name: date_creation, valueDate: "2024-10-31T10:00:00" }
+
+        - insert:
+            tableName: zone
+            columns:
+              - column: { name: id, valueComputed: "gen_random_uuid()" }
+              - column: { name: nom, value: "Banlieue Nord" }
+              - column: { name: code_postal, value: "10002" }
+              - column: { name: date_creation, valueDate: "2024-10-31T10:05:00" }
+
 #        # -------------------- USERS --------------------
 #        - insert:
 #            tableName: users

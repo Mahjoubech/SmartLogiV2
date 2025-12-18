@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,7 +78,7 @@ public class ColisControllerUnitTest {
         response.setStatut("CREE");
         response.setPriorite("NORMAL");
         response.setVilleDestination("Paris");
-        response.setDateCreation(ZonedDateTime.now());
+        response.setDateCreation(LocalDateTime.now());
 
         ClientDestinataireResponse expediteur = new ClientDestinataireResponse();
         expediteur.setEmail("sender@example.com");
@@ -105,7 +106,7 @@ public class ColisControllerUnitTest {
         response.setStatut("CREE");
         response.setPriorite("NORMAL");
         response.setVilleDestination("Paris");
-        response.setDateCreation(ZonedDateTime.now());
+        response.setDateCreation(LocalDateTime.now());
 
         ClientDestinataireResponseBasic expediteur = new ClientDestinataireResponseBasic();
         response.setClientExpediteur(expediteur);

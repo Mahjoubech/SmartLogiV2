@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,7 +56,7 @@ public class ColisServiceImpl implements ColisService {
         HistoriqueLivraison historique = new HistoriqueLivraison();
         historique.setColis(colis);
         historique.setStatus(statut);
-        historique.setDateChangement(ZonedDateTime.now());
+        historique.setDateChangement(LocalDateTime.now());
         historique.setCommentaire(commentaire);
         return historique;
     }
@@ -126,7 +127,7 @@ public class ColisServiceImpl implements ColisService {
                 colisProduit.setColis(savedColis);
                 colisProduit.setProduit(produitEntity);
                 colisProduit.setQuantite(produitRequest.getColisProduit().getQuantite());
-                colisProduit.setDateAjout(ZonedDateTime.now());
+                colisProduit.setDateAjout(LocalDateTime.now());
 
                 BigDecimal prixTotal = produitEntity.getPrix().multiply(BigDecimal.valueOf(produitRequest.getColisProduit().getQuantite()));
                 colisProduit.setPrixUnitaire(prixTotal);
@@ -232,7 +233,7 @@ public ColisResponse updateColis(String colisId, ColisRequest request) {
                             newAssociation.setColis(colis);
                             newAssociation.setProduit(produitEntity);
                             newAssociation.setQuantite(produitRequest.getColisProduit().getQuantite());
-                            newAssociation.setDateAjout(ZonedDateTime.now());
+                            newAssociation.setDateAjout(LocalDateTime.now());
                             return newAssociation;
                         });
 
@@ -425,7 +426,7 @@ public ColisResponse updateColis(String colisId, ColisRequest request) {
 
     @Override
     @Transactional
-    public List<ColisResponse> getDelayedOrHighPriorityColis(ZonedDateTime dateLimiteCheck) {
+    public List<ColisResponse> getDelayedOrHighPriorityColis(LocalDateTime dateLimiteCheck) {
 
         PrioriteStatus highPriority = PrioriteStatus.URGENT;
         List<Colis> delayedColis = colisRepository.findByPrioriteOrDelayed(highPriority, dateLimiteCheck);

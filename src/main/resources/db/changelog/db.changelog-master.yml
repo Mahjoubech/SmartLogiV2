@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changes/20251028-02-add-foreign-keys.yml
   - include:
       file: db/changelog/changes/20251117-05-make-audit-columns-nullable.yml
+  - include:
+        file: db/changelog/changes/20251031-03-insert-data.yml
