@@ -75,7 +75,7 @@ public class ClientDestinataireController {
                     @ApiResponse(responseCode = "200", description = "Mise à jour réussie"),
                     @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
             })
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('CLIENT')")
     @PutMapping("/{clientId}")
     public ResponseEntity<ClientDestinataireResponse> updateClient(
             @PathVariable String clientId,
