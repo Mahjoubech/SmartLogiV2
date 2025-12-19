@@ -22,12 +22,14 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+                .cors(cors ->{})
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/v2/auth/**").permitAll();
                     auth.requestMatchers("/api/v3/clients/**").hasAnyRole("MANAGER" , "CLIENT");
                     auth.requestMatchers("/api/v1/gestionner/livreur/**").hasAnyRole("MANAGER" , "LIVREUR");
+                    auth.requestMatchers("/api/v1/colis").hasAnyRole("CLIENT");
                     auth.requestMatchers("/api/v2/colis/**").hasAnyRole("MANAGER" ,"CLIENT" , "LIVREUR");
                     auth.requestMatchers("/api/v4/gestion/**").hasRole("MANAGER");
                     auth.anyRequest().authenticated();
