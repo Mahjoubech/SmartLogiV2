@@ -1,6 +1,7 @@
 package io.github.mahjoubech.smartlogiv2.service.impl;
 
 import io.github.mahjoubech.smartlogiv2.config.AppConfig;
+import io.github.mahjoubech.smartlogiv2.config.JwtService;
 import io.github.mahjoubech.smartlogiv2.dto.request.LoginRequest;
 import io.github.mahjoubech.smartlogiv2.dto.request.RegisterRequest;
 import io.github.mahjoubech.smartlogiv2.dto.response.AuthResponse;
@@ -34,6 +35,7 @@ public class AuthServiceImpl implements AuthService {
     private final LivreurRepository livreurRepository;
     private  final LivreurMapper livreurMapper;
     private  final ZoneRepository zoneRepository;
+    private  final JwtService jwtService;
 
     @Override
     @Transactional
@@ -69,8 +71,10 @@ public class AuthServiceImpl implements AuthService {
         } else {
             throw new ValidationException("Role not supported");
         }
-
-        return userMapper.toAuthResponse(savedUser);
+      var jwtToken = jwtService.generateToken(savedUser);
+        AuthResponse authResponse = userMapper.toAuthResponse(savedUser);
+        authResponse.setToken(jwtToken);
+        return authResponse;
     }
 
 
