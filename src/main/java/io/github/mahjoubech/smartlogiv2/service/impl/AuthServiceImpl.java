@@ -18,6 +18,8 @@ import io.github.mahjoubech.smartlogiv2.repository.*;
 import io.github.mahjoubech.smartlogiv2.service.AuthService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final UserMapper userMapper;
+    private final UserRepository userRepository;
     private final ClientDestinataireMapper clientDestinataireMapper;
     private final GestionnerMapper gestionnerMapper;
     private final PasswordEncoder passwordEncoder;
@@ -36,6 +39,7 @@ public class AuthServiceImpl implements AuthService {
     private  final LivreurMapper livreurMapper;
     private  final ZoneRepository zoneRepository;
     private  final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     @Transactional
@@ -80,7 +84,20 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse login(LoginRequest request) {
-        return null;
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+        if(userOptional.isEmpty()){
+            throw new ResourceNotFoundException("User not found");
+        }
+        var jwtToken = jwtService.generateToken(userOptional.get());
+        AuthResponse authResponse = userMapper.toAuthResponse(userOptional.get());
+        authResponse.setToken(jwtToken);
+        return authResponse;
     }
 
     @Override
@@ -88,6 +105,5 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-    private final UserRepository userRepository;
 
 }
