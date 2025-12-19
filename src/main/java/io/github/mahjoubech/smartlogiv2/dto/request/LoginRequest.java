@@ -2,7 +2,9 @@ package io.github.mahjoubech.smartlogiv2.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
+@Data
 public class LoginRequest {
         @Email
         @NotBlank(message = "L'email est obligatoire.")

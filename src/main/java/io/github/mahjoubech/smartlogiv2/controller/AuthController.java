@@ -1,5 +1,6 @@
 package io.github.mahjoubech.smartlogiv2.controller;
 
+import io.github.mahjoubech.smartlogiv2.dto.request.LoginRequest;
 import io.github.mahjoubech.smartlogiv2.dto.request.RegisterRequest;
 import io.github.mahjoubech.smartlogiv2.dto.response.AuthResponse;
 import io.github.mahjoubech.smartlogiv2.service.AuthService;
@@ -23,9 +24,11 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(authResponse);
     }
     @PostMapping("/login")
-    public String login() {
-        return "Hello from AuthController";
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+        AuthResponse authResponse = authService.login(request);
+        return ResponseEntity.ok(authResponse);
     }
+
     @PostMapping("/refrech")
     public String refreshToken() {
         return "Hello from AuthController";

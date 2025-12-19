@@ -13,7 +13,5 @@ public interface UserMapper {
 
     User toRegister(RegisterRequest register);
     User toLogin(LoginRequest login);
-    @Mapping(target = "nom_complet", expression = "java(entity.getNom() + \" \" + entity.getPrenom())")
     AuthResponse toAuthResponse(User user);
-
 }
