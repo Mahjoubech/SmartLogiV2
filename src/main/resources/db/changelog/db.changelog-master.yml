@@ -7,3 +7,7 @@ databaseChangeLog:
       file: db/changelog/changes/20251117-05-make-audit-columns-nullable.yml
   - include:
         file: db/changelog/changes/20251031-03-insert-data.yml
+  - include:
+        file: db/changelog/changes/20251029-03-create-roles-permissions.yml
+  - include:
+        file: db/changelog/changes/20251029-04-add-role-id-to-users.yml

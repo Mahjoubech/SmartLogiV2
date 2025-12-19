@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20251029-04-add-role-id-to-users
+      author: Mahjoubech
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: role_id
+                  type: varchar(50)
+
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: role_id
+            referencedTableName: roles
+            referencedColumnNames: id
+            constraintName: fk_users_roles

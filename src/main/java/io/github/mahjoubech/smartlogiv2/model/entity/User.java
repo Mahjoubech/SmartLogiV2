@@ -11,7 +11,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -31,12 +34,22 @@ public  class User extends BaseEntity implements UserDetails {
         protected String telephone ;
         @Column(name = "password", nullable = false)
         protected String password ;
-        @Enumerated(EnumType.STRING)
-        @Column(name = "role")
-        protected Roles role;
+        @ManyToOne
+        @JoinColumn(name = "role_id")
+        private RolesEntity role;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        if(role != null){
+            authorities.add(new SimpleGrantedAuthority(role.getName().name().toUpperCase()));
+
+            authorities.addAll(
+                    role.getPermissions().stream()
+                            .map(permission -> new SimpleGrantedAuthority(permission.getName()))
+                            .collect(Collectors.toSet())
+            );
+        }
+        return authorities;
     }
 
     @Override
