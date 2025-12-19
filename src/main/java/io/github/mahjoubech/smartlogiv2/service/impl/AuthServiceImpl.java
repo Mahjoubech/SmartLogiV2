@@ -77,6 +77,7 @@ public class AuthServiceImpl implements AuthService {
         }
       var jwtToken = jwtService.generateToken(savedUser);
         AuthResponse authResponse = userMapper.toAuthResponse(savedUser);
+        authResponse.setRole(savedUser.getRole().getName().name());
         authResponse.setToken(jwtToken);
         return authResponse;
     }
