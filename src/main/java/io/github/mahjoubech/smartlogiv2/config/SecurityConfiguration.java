@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -27,11 +29,6 @@ public class SecurityConfiguration {
 
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/v2/auth/**").permitAll();
-                    auth.requestMatchers("/api/v3/clients/**").hasAnyRole("MANAGER" , "CLIENT");
-                    auth.requestMatchers("/api/v1/gestionner/livreur/**").hasAnyRole("MANAGER" , "LIVREUR");
-                    auth.requestMatchers("/api/v1/colis").hasAnyRole("CLIENT");
-                    auth.requestMatchers("/api/v2/colis/**").hasAnyRole("MANAGER" ,"CLIENT" , "LIVREUR");
-                    auth.requestMatchers("/api/v4/gestion/**").hasRole("MANAGER");
                     auth.anyRequest().authenticated();
                 })
 
