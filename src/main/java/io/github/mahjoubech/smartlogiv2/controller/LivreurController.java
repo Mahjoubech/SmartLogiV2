@@ -34,7 +34,7 @@ public class LivreurController {
                     @ApiResponse(responseCode = "201", description = "Livreur créé avec succès"),
                     @ApiResponse(responseCode = "400", description = "Erreur de validation des champs")
             })
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyAuthority('MANAGER_CREATE')")
     @PostMapping
     public ResponseEntity<LivreurResponse> createLivreur(@Valid @RequestBody LivreurRequest livreurRequest){
         LivreurResponse livreurResponse= livreurService.createLivreur(livreurRequest);
@@ -43,7 +43,7 @@ public class LivreurController {
     @Operation(summary = "Afficher la liste paginée de tous les livreurs",
             description = "Retourne la liste complète des livreurs avec des options de tri et de pagination.",
             responses = {@ApiResponse(responseCode = "200", description = "Liste paginée des livreurs retournée")})
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyAuthority('MANAGER_VIEW')")
     @GetMapping
     public ResponseEntity<Page<LivreurResponse>> getAllLivreurs(
             @RequestParam(defaultValue = "0") int page,
@@ -62,7 +62,7 @@ public class LivreurController {
                     @ApiResponse(responseCode = "200", description = "Détails du livreur trouvés"),
                     @ApiResponse(responseCode = "404", description = "Livreur non trouvé")
             })
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyAuthority('MANAGER_VIEW','LIVREUR_VIEW')")
     @GetMapping("/{livreur_id}")
     public ResponseEntity<LivreurResponse> getLivreurById(
             @Parameter(description = "ID unique du livreur") @PathVariable("livreur_id") String livreurId){
@@ -76,7 +76,7 @@ public class LivreurController {
                     @ApiResponse(responseCode = "200", description = "Mise à jour réussie"),
                     @ApiResponse(responseCode = "404", description = "Livreur non trouvé")
             })
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyAuthority('MANAGER_UPDATE')")
     @PutMapping("/{livreur_id}")
     public ResponseEntity<LivreurResponse> updateLivreur(@PathVariable("livreur_id") String livreurId,
                                                          @Valid @RequestBody LivreurRequest livreurRequest){
@@ -91,7 +91,7 @@ public class LivreurController {
                     @ApiResponse(responseCode = "404", description = "Livreur non trouvé"),
                     @ApiResponse(responseCode = "409", description = "Conflit: Livreur lié à des colis")
             })
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyAuthority('MANAGER_DELETE')")
     @DeleteMapping("/{livreur_id}")
     public ResponseEntity<String> deleteLivreur(@PathVariable("livreur_id") String livre){
         livreurService.deleteLivreur(livre);
@@ -102,7 +102,7 @@ public class LivreurController {
     @Operation(summary = "Rechercher des livreurs par mot-clé",
             description = "Recherche des livreurs par Nom, Prénom, ou Téléphone (recherche unifiée).",
             responses = {@ApiResponse(responseCode = "200", description = "Résultats de la recherche paginés")})
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyAuthority('MANAGER_VIEW')")
     @GetMapping("/search")
     public ResponseEntity<Page<LivreurResponse>> searchLivreurs(
             @Parameter(description = "Mot-clé pour la recherche par Nom, Prénom, ou Téléphone.") @RequestParam(required = false) String keyword,
@@ -115,7 +115,7 @@ public class LivreurController {
     @Operation(summary = "Consulter le nombre de colis assignés par livreur",
             description = "Opération Gestionnaire: Retourne la liste des livreurs avec le compte des colis qui leur sont affectés (utile pour l'équilibrage des tournées).",
             responses = {@ApiResponse(responseCode = "200", description = "Liste des livreurs avec leurs comptes de colis")})
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyAuthority('MANAGER_VIEW')")
     @GetMapping("/counts")
     public ResponseEntity<Page<LivreurColisResponse>> getLivreurColisCounts(Pageable pageable) {
         Page<LivreurColisResponse> result = livreurService.getLivreurColisCounts(pageable);
@@ -128,7 +128,7 @@ public class LivreurController {
                     @ApiResponse(responseCode = "200", description = "Liste paginée des colis assignés"),
                     @ApiResponse(responseCode = "404", description = "Livreur non trouvé")
             })
-    @PreAuthorize("hasAnyRole('MANAGER','LIVREUR')")
+    @PreAuthorize("hasAnyAuthority('LIVREUR_ASSIGN_COLIS')")
     @GetMapping("/{livreurId}/colis")
     public ResponseEntity<Page<ColisResponse>> getAssignedColis(
             @PathVariable String livreurId,

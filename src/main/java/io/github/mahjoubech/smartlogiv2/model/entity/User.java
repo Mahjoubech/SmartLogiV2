@@ -34,14 +34,14 @@ public  class User extends BaseEntity implements UserDetails {
         protected String telephone ;
         @Column(name = "password", nullable = false)
         protected String password ;
-        @ManyToOne
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "role_id")
         private RolesEntity role;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
         if(role != null){
-            authorities.add(new SimpleGrantedAuthority(role.getName().name().toUpperCase()));
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().name().toUpperCase()));
 
             authorities.addAll(
                     role.getPermissions().stream()

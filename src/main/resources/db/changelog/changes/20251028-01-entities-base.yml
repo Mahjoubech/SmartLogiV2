@@ -35,12 +35,6 @@ databaseChangeLog:
                     constraints:
                       nullable: false
                 - column:
-                    name: role
-                    type: VARCHAR(50)
-                    constraints:
-                      nullable: false
-
-                - column:
                     name: date_creation
                     type: TIMESTAMP WITHOUT TIME ZONE
                     constraints:
