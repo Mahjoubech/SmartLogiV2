@@ -5,6 +5,7 @@ import io.github.mahjoubech.smartlogiv2.config.JwtService;
 import io.github.mahjoubech.smartlogiv2.dto.request.LoginRequest;
 import io.github.mahjoubech.smartlogiv2.dto.request.RegisterRequest;
 import io.github.mahjoubech.smartlogiv2.dto.response.AuthResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.basic.RolesResponesBasic;
 import io.github.mahjoubech.smartlogiv2.exception.ConflictStateException;
 import io.github.mahjoubech.smartlogiv2.exception.ResourceNotFoundException;
 import io.github.mahjoubech.smartlogiv2.exception.ValidationException;
@@ -77,7 +78,9 @@ public class AuthServiceImpl implements AuthService {
         }
       var jwtToken = jwtService.generateToken(savedUser);
         AuthResponse authResponse = userMapper.toAuthResponse(savedUser);
-        authResponse.setRole(savedUser.getRole().getName().name());
+        RolesResponesBasic roleResponse = new RolesResponesBasic();
+        roleResponse.setName(savedUser.getRole().getName());
+        authResponse.setRole(roleResponse);
         authResponse.setToken(jwtToken);
         return authResponse;
     }
@@ -97,6 +100,9 @@ public class AuthServiceImpl implements AuthService {
         }
         var jwtToken = jwtService.generateToken(userOptional.get());
         AuthResponse authResponse = userMapper.toAuthResponse(userOptional.get());
+        RolesResponesBasic roleResponse = new RolesResponesBasic();
+        roleResponse.setName(userOptional.get().getRole().getName());
+        authResponse.setRole(roleResponse);
         authResponse.setToken(jwtToken);
         return authResponse;
     }

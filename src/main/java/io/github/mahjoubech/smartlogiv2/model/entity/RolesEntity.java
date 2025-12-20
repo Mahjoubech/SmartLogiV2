@@ -3,9 +3,9 @@ package io.github.mahjoubech.smartlogiv2.model.entity;
 import io.github.mahjoubech.smartlogiv2.model.enums.Roles;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
 
@@ -14,13 +14,8 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class RolesEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+@SuperBuilder
+public class RolesEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(unique = true)
     private Roles name;

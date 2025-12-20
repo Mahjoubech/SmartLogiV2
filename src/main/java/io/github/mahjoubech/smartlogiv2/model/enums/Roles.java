@@ -1,7 +1,8 @@
 package io.github.mahjoubech.smartlogiv2.model.enums;
 
 public enum Roles {
-   CLIENT ,
+    ADMIN,
+    CLIENT ,
     LIVREUR ,
     MANAGER
 }
