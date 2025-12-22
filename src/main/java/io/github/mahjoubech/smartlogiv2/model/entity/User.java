@@ -34,7 +34,7 @@ public  class User extends BaseEntity implements UserDetails {
         protected String telephone ;
         @Column(name = "password", nullable = false)
         protected String password ;
-        @ManyToOne(fetch = FetchType.LAZY)
+        @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn(name = "role_id")
         private RolesEntity role;
     @Override
@@ -45,12 +45,13 @@ public  class User extends BaseEntity implements UserDetails {
 
             authorities.addAll(
                     role.getPermissions().stream()
-                            .map(permission -> new SimpleGrantedAuthority(permission.getName()))
+                            .map(permission -> new SimpleGrantedAuthority(permission.getName().toUpperCase().replace(" ", "_")))
                             .collect(Collectors.toSet())
             );
         }
         return authorities;
     }
+
 
     @Override
     public String getUsername() {

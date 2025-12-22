@@ -38,7 +38,6 @@ public class ColisController {
                     @ApiResponse(responseCode = "400", description = "Données invalides ou statut de priorité incorrect"),
                     @ApiResponse(responseCode = "404", description = "Client/Destinataire/Zone non trouvé")
             })
-    @PreAuthorize("hasAnyRole('CLIENT')")
     @PostMapping
     public ResponseEntity<ColisResponse> createColis(@Valid @RequestBody ColisRequest request) {
         ColisResponse response = colisService.createDelivery(request);
@@ -65,8 +64,6 @@ public class ColisController {
                     @ApiResponse(responseCode = "200", description = "Colis trouvé"),
                     @ApiResponse(responseCode = "404", description = "Colis non trouvé")
             })
-    @PreAuthorize("hasAnyRole('CLIENT')")
-
     @GetMapping("/{colisId}")
     public ResponseEntity<ColisResponse> getColisById(@PathVariable String colisId) {
         ColisResponse response = colisService.getColisById(colisId);
@@ -80,7 +77,6 @@ public class ColisController {
                     @ApiResponse(responseCode = "400", description = "Colis déjà en cours de traitement"),
                     @ApiResponse(responseCode = "404", description = "Colis non trouvé")
             })
-    @PreAuthorize("hasAnyRole('CLIENT')")
     @PutMapping("/{colisId}")
     public ResponseEntity<ColisResponse> updateColis(
             @PathVariable String colisId,
@@ -96,7 +92,6 @@ public class ColisController {
                     @ApiResponse(responseCode = "400", description = "Statut ne permettant pas la suppression"),
                     @ApiResponse(responseCode = "404", description = "Colis non trouvé")
             })
-    @PreAuthorize("hasAnyRole('CLIENT')")
     @DeleteMapping("/{colisId}")
     public ResponseEntity<String> deleteColis(@PathVariable String colisId) {
         colisService.deleteColis(colisId);
@@ -110,7 +105,6 @@ public class ColisController {
                     @ApiResponse(responseCode = "200", description = "Statut mis à jour (et notifications envoyées)"),
                     @ApiResponse(responseCode = "400", description = "Statut invalide ou colis déjà terminé")
             })
-    @PreAuthorize("hasAnyRole('MANAGER','LIVREUR')")
     @PutMapping("/{colisId}/status")
     public ResponseEntity<ColisResponse> updateColisStatus(
             @PathVariable String colisId,
@@ -126,7 +120,6 @@ public class ColisController {
                     @ApiResponse(responseCode = "404", description = "Colis ou Livreur non trouvé"),
                     @ApiResponse(responseCode = "400", description = "La zone du colis ne correspond pas à la zone du livreur.")
             })
-    @PreAuthorize("hasAnyRole('MANAGER')")
     @PutMapping("gestionner/livreur/{colisId}/assign")
     public ResponseEntity<ColisResponse> assignColisToLivreur(
             @PathVariable String colisId,
@@ -139,7 +132,6 @@ public class ColisController {
     @Operation(summary = "Filtrage et Recherche avancée",
             description = "Recherche et pagine les colis par Statut, Zone, Ville ou Priorité.",
             responses = {@ApiResponse(responseCode = "200", description = "Résultats du filtre paginés")})
-    @PreAuthorize("hasAnyRole('MANAGER')")
     @GetMapping("/search")
     public ResponseEntity<Page<ColisResponse>> findColisByCriteria(
             @RequestParam(required = false) String statut,
@@ -155,7 +147,6 @@ public class ColisController {
     @Operation(summary = "Consulter les colis d'un expéditeur",
             description = "Utilisé par le client pour suivre l'état de ses envois.",
             responses = {@ApiResponse(responseCode = "200", description = "Liste des colis de l'expéditeur")})
-    @PreAuthorize("hasRole('CLIENT')")
     @GetMapping("/expediteur/{expediteurId}")
     public ResponseEntity<Page<ColisResponse>> getColisByExpediteur(
             @PathVariable String expediteurId,
@@ -168,7 +159,6 @@ public class ColisController {
     @Operation(summary = "Consulter l'historique complet d'un colis",
             description = "Utilisé pour la traçabilité: retourne toutes les étapes (statuts et commentaires) d'un colis donné.",
             responses = {@ApiResponse(responseCode = "200", description = "Historique retourné")})
-    @PreAuthorize("hasAnyRole('MANAGER','CLIENT')")
     @GetMapping("/{colisId}/history")
     public ResponseEntity<Page<HistoriqueLivraisonResponse>> getColisHistory(@PathVariable String colisId , Pageable pageable) {
         Page<HistoriqueLivraisonResponse> history = colisService.getColisHistory(colisId , pageable);
@@ -178,10 +168,10 @@ public class ColisController {
     @Operation(summary = "Rapport de synthèse des colis par regroupement",
             description = "Opération Gestionnaire: Calcule le nombre total de colis regroupés par statut ou par zone.",
             responses = {@ApiResponse(responseCode = "200", description = "Synthèse des colis par groupe")})
-    @PreAuthorize("hasAnyRole('MANAGER')")
     @GetMapping("/summary")
     public ResponseEntity<Map<String, Long>> getColisSummary(@RequestParam String groupByField) {
         Map<String, Long> summary = colisService.getColisSummary(groupByField);
         return ResponseEntity.ok(summary);
     }
+
 }

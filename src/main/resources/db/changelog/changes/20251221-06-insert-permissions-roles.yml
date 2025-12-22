@@ -1,0 +1,20 @@
+databaseChangeLog:
+   - changeSet:
+        id: 20251221-06-insert-permissions-roles
+        author: Mahjoubech
+        changes:
+        - insert:
+               tableName: permissions
+               columns:
+                - column: { name: id, valueComputed: "gen_random_uuid()" }
+                - column: { name: name, value: "CREATE_PERMISSION" }
+                - column: { name: date_creation, valueDate: "2024-10-31T10:00:00" }
+                - column: { name: date_modification, valueDate: "2024-10-31T10:00:00" }
+                - column: { name: created_by, value: "system" }
+                - column: { name: modified_by, value: "system" }
+
+        - insert:
+               tableName: roles_permissions
+               columns:
+                - column: { name: role_id, valueComputed: "(select id from roles where name='ADMIN')" }
+                - column: { name: permission_id, valueComputed: "(select id from permissions where name='CREATE_PERMISSION')" }
