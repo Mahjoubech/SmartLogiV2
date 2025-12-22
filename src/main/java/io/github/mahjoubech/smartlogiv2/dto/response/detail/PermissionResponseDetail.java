@@ -9,6 +9,6 @@ public class PermissionResponseDetail {
     private String id;
     private String name;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" , locale = "fr")
-    private LocalDateTime createdAt;
+    private LocalDateTime dateCreation;
     private String createdBy;
 }
