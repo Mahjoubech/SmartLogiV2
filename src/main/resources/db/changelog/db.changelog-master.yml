@@ -11,3 +11,5 @@ databaseChangeLog:
         file: db/changelog/changes/20251029-03-create-roles-permissions.yml
   - include:
         file: db/changelog/changes/20251029-04-add-role-id-to-users.yml
+  - include:
+        file: db/changelog/changes/20251221-06-insert-permissions-roles.yml

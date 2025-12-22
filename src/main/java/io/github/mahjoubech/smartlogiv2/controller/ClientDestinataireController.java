@@ -36,7 +36,6 @@ public class ClientDestinataireController {
                     @ApiResponse(responseCode = "409", description = "Conflit: Email déjà utilisé"),
                     @ApiResponse(responseCode = "400", description = "Erreur de validation des champs")
             })
-    @PreAuthorize("hasAnyRole('CLIENT')")
     @PostMapping("/register/expediteur")
     public ResponseEntity<ClientDestinataireResponse> createExpediteur(@Valid @RequestBody ClientDestinataireRequest request) {
         ClientDestinataireResponse response = clientDestinataireService.createExpediteur(request);
@@ -49,7 +48,6 @@ public class ClientDestinataireController {
                     @ApiResponse(responseCode = "201", description = "Destinataire créé avec succès"),
                     @ApiResponse(responseCode = "409", description = "Conflit: Email déjà utilisé")
             })
-    @PreAuthorize("hasAnyRole('CLIENT')")
     @PostMapping("/register/destinataire")
     public ResponseEntity<ClientDestinataireResponse> createDestinataire(@Valid @RequestBody ClientDestinataireRequest request) {
         ClientDestinataireResponse response = clientDestinataireService.createDestinataire(request);
@@ -62,7 +60,6 @@ public class ClientDestinataireController {
                     @ApiResponse(responseCode = "200", description = "Détails de l'utilisateur trouvés"),
                     @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
             })
-    @PreAuthorize("hasAnyRole('CLIENT')")
     @GetMapping("/{clientId}")
     public ResponseEntity<ClientDestinataireResponse> getColisById(@PathVariable String clientId) {
         ClientDestinataireResponse response = clientDestinataireService.getClientById(clientId);
@@ -75,7 +72,6 @@ public class ClientDestinataireController {
                     @ApiResponse(responseCode = "200", description = "Mise à jour réussie"),
                     @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
             })
-    @PreAuthorize("hasAnyRole('CLIENT')")
     @PutMapping("/{clientId}")
     public ResponseEntity<ClientDestinataireResponse> updateClient(
             @PathVariable String clientId,
@@ -91,7 +87,6 @@ public class ClientDestinataireController {
                     @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé"),
                     @ApiResponse(responseCode = "409", description = "Conflit: Lié à des colis existants")
             })
-    @PreAuthorize("hasAnyRole('CLIENT')")
     @DeleteMapping("/{clientId}")
     public ResponseEntity<String> deleteClient(@PathVariable String clientId) {
         clientDestinataireService.deleteClient(clientId);
@@ -102,7 +97,6 @@ public class ClientDestinataireController {
     @Operation(summary = "Afficher la liste paginée de tous les clients et destinataires",
             description = "Utilisé par le gestionnaire pour visualiser toute la base clients avec pagination et tri.",
             responses = {@ApiResponse(responseCode = "200", description = "Liste paginée des utilisateurs retournée")})
-    @PreAuthorize("hasAnyRole('MANAGER')")
     @GetMapping
     public ResponseEntity<Page<ClientDestinataireResponse>> getAllClients(
             @RequestParam(defaultValue = "0") int page,
@@ -118,7 +112,6 @@ public class ClientDestinataireController {
     @Operation(summary = "Rechercher des clients ou destinataires par mot-clé",
             description = "Permet de rechercher des utilisateurs par Nom, Email, ou Téléphone (recherche unifiée).",
             responses = {@ApiResponse(responseCode = "200", description = "Résultats de la recherche paginés")})
-    @PreAuthorize("hasAnyRole('MANAGER' , 'CLIENT')")
     @GetMapping("/search")
     public ResponseEntity<Page<ClientDestinataireResponse>> searchClients(
             @RequestParam String keyword,

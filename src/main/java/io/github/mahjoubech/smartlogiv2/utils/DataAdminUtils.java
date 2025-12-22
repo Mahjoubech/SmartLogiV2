@@ -43,7 +43,7 @@ public class DataAdminUtils implements CommandLineRunner {
 
             userRepository.save(admin);
 
-            log.info("✅ Admin created: admin@smartlogi.com / admin123");
+            log.info(" Admin created: admin@smartlogi.com / admin123");
         }
     }
 
