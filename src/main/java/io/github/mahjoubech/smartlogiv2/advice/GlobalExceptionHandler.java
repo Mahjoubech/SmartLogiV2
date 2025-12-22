@@ -1,8 +1,9 @@
 package io.github.mahjoubech.smartlogiv2.advice;
 
+import io.github.mahjoubech.smartlogiv2.exception.ConflictStateException;
 import io.github.mahjoubech.smartlogiv2.exception.ResourceNotFoundException;
 import io.github.mahjoubech.smartlogiv2.exception.ValidationException;
-import io.github.mahjoubech.smartlogiv2.exception.ConflictStateException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import io.github.mahjoubech.smartlogiv2.dto.response.ApiResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.ApiResponseError;
 import io.github.mahjoubech.smartlogiv2.model.enums.ColisStatus; // ColisStatus howa l'Enum dyalek
@@ -81,7 +82,14 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response); // 404
     }
-
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ApiResponse> handleAuthorizationDenied(AuthorizationDeniedException ex) {
+        ApiResponse response = new ApiResponse(
+                HttpStatus.FORBIDDEN.value(),
+                "Forbidden: You don't have permission to access this resource"
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
     // 2. Validation / Business Logic Error (400)
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ApiResponse> handleValidationException(ValidationException ex){
@@ -102,11 +110,13 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
+    @ExceptionHandler(RuntimeException.class )
+    public ResponseEntity<ApiResponse> handleRuntimeException(RuntimeException ex) {
         logger.error("Unexpected error occurred: {}", ex.getMessage(), ex);
-        Map<String, String> response = new HashMap<>();
-        response.put("error", ex.getMessage());
+        ApiResponse response = new ApiResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage()
+        );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }

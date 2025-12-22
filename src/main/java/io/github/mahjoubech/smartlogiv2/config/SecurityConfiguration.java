@@ -63,7 +63,7 @@ public class SecurityConfiguration {
                             String json = """
                     {
                       "status": 403,
-                      "message": "Forbidden: You don't have permission to access this resource"
+                      "message": " You don't have permission to access this resource"
                     }
                     """;
 
