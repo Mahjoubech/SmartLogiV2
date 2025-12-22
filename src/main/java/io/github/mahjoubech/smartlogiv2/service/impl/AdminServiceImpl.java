@@ -1,18 +1,26 @@
 package io.github.mahjoubech.smartlogiv2.service.impl;
 
+import io.github.mahjoubech.smartlogiv2.dto.request.AssignRequest;
 import io.github.mahjoubech.smartlogiv2.dto.request.PermissionRequest;
 import io.github.mahjoubech.smartlogiv2.dto.request.RolesEntityRequest;
+import io.github.mahjoubech.smartlogiv2.dto.response.basic.ColisResponseBasic;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.AssignResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.PermissionResponseDetail;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.RolesResponse;
 import io.github.mahjoubech.smartlogiv2.exception.ConflictStateException;
+import io.github.mahjoubech.smartlogiv2.exception.ResourceNotFoundException;
 import io.github.mahjoubech.smartlogiv2.mapper.PermissionMapper;
 import io.github.mahjoubech.smartlogiv2.mapper.RolesMapper;
+import io.github.mahjoubech.smartlogiv2.model.entity.Colis;
 import io.github.mahjoubech.smartlogiv2.model.entity.Permission;
 import io.github.mahjoubech.smartlogiv2.model.entity.RolesEntity;
 import io.github.mahjoubech.smartlogiv2.repository.PermissionRepository;
 import io.github.mahjoubech.smartlogiv2.repository.RolesEntityRepository;
 import io.github.mahjoubech.smartlogiv2.service.AdminService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -25,8 +33,9 @@ public class AdminServiceImpl implements AdminService {
     private final RolesEntityRepository rolesEntityRepository;
     private  final RolesMapper rolesMapper;
     @Override
+    @Transactional
     public PermissionResponseDetail createPermission(PermissionRequest request) {
-        String name = request.getName().toUpperCase().trim().replaceAll("\\s+", "_");
+        String name = request.getName().toUpperCase().trim().replaceAll("[^A-Z0-9]+", "_");
         Optional<Permission> permission = permissionRepository.findByName(name);
         if(permission.isPresent()){
             throw new ConflictStateException("Permission with name " + name + " already exists");
@@ -42,6 +51,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional
     public RolesResponse createRoles(RolesEntityRequest request) {
         Optional<RolesEntity> rolesEntity = rolesEntityRepository.findByName(request.getName());
         if(rolesEntity.isPresent()){
@@ -54,5 +64,25 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void deleteRoles(String id) {
         rolesEntityRepository.deleteById(id);
+    }
+    @Override
+    @Transactional
+    public AssignResponse assignPermissionToRole(AssignRequest request) {
+        String roleId = request.getRoleId();
+        String permissionId = request.getPermissionId();
+        RolesEntity role = rolesEntityRepository.findById(roleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Role with id " + roleId + " not found"));
+        Permission permission = permissionRepository.findById(permissionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Permission with id " + permissionId + " not found"));
+
+        role.getPermissions().add(permission);
+        rolesEntityRepository.save(role);
+
+        return rolesMapper.toAssignResponse(rolesEntityRepository.save(role));
+    }
+    @Override
+    public Page<PermissionResponseDetail> getAllPermissions(Pageable pageable) {
+        Page<Permission> colisPage = permissionRepository.findAll(pageable);
+        return colisPage.map(permissionMapper::toResponseDetail);
     }
 }
