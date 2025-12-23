@@ -28,6 +28,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -41,6 +42,7 @@ public class AdminServiceImpl implements AdminService {
     private  final RolesMapper rolesMapper;
     private final GestionnerRepository gestionnerRepository;
     private final GestionnerMapper gestionnerMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -110,6 +112,7 @@ public class AdminServiceImpl implements AdminService {
         }
         Optional<RolesEntity> rolesEntity = rolesEntityRepository.findByName(Roles.MANAGER);
         Gestionner gestionner = gestionnerMapper.toGestionner(request);
+        gestionner.setPassword(passwordEncoder.encode(request.getPassword()));
         gestionner.setRole(rolesEntity.get());
         return gestionnerMapper.toResponse(gestionnerRepository.save(gestionner));
     }

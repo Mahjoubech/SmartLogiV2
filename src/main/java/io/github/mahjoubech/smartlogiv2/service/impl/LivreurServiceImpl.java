@@ -22,6 +22,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -36,6 +37,8 @@ public class LivreurServiceImpl implements LivreurService {
     private final LivreurMapper livreurMapper;
     private final ColisMapper colisMapper;
     private final RolesEntityRepository rolesEntityRepository;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Override
     @Transactional
@@ -48,6 +51,7 @@ public class LivreurServiceImpl implements LivreurService {
         Optional<RolesEntity> roleLivreur = rolesEntityRepository.findByName(Roles.LIVREUR);
         Livreur livreur = livreurMapper.toEntity(request);
         livreur.setZoneAssigned(zone);
+        livreur.setPassword(passwordEncoder.encode(request.getPassword()));
         livreur.setRole(roleLivreur.get());
         return livreurMapper.toResponse(livreurRepository.save(livreur));
     }

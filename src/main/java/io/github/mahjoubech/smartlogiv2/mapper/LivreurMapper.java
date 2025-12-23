@@ -19,7 +19,6 @@ public interface LivreurMapper {
     @Mapping(target = "role", ignore = true)
     Livreur toLivreur(RegisterRequest livreur);
     @Mapping(target = "zoneAssignee", source = "zoneAssigned")
-    @Mapping(target = "role", ignore = true)
     LivreurResponse toResponse(Livreur entity);
     @Mapping(target = "nomComplet", expression = "java(entity.getNom() + \" \" + entity.getPrenom())")
     LivreurColisResponse toColisResponse(Livreur entity);
