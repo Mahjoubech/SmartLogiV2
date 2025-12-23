@@ -8,20 +8,20 @@ import lombok.Data;
 
 @Data
 public class RegisterRequest {
-    @NotNull(message = "Le nom est obligatoire.")
+    @NotBlank(message = "Le nom est obligatoire.")
     private String nom;
-    @NotNull(message = "Le Prenom est obligatoire.")
+    @NotBlank(message = "Le Prenom est obligatoire.")
     private String prenom;
     @Email(message = "L'email doit être valide.")
     private String email;
-    @NotNull(message = "Telephone est obligatoire")
+    @NotBlank(message = "Telephone est obligatoire")
     private String telephone;
-    @NotNull(message = "password")
+    @NotBlank(message = "password")
     private String password;
-    @NotNull(message = "La confirmation du mot de passe est obligatoire.")
+    @NotBlank(message = "La confirmation du mot de passe est obligatoire.")
     private String confirmPassword;
+    @NotBlank(message = "Le role est obligatoire.")
     private String adresse;
-    private String vehicule;
-    private String zoneAssigned;
+
 
 }
