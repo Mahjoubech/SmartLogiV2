@@ -1,9 +1,11 @@
 package io.github.mahjoubech.smartlogiv2.controller;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.AssignRequest;
+import io.github.mahjoubech.smartlogiv2.dto.request.GestionnerRequest;
 import io.github.mahjoubech.smartlogiv2.dto.request.PermissionRequest;
 import io.github.mahjoubech.smartlogiv2.dto.response.basic.ColisResponseBasic;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.AssignResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.GestionResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.PermissionResponseDetail;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.RolesResponse;
 import io.github.mahjoubech.smartlogiv2.service.AdminService;
@@ -65,5 +67,16 @@ public class AdminController {
         Page<RolesResponse> permissionPages = adminService.getAllRoles(pageable);
         return ResponseEntity.ok().body(permissionPages);
     }
-
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE')")
+    @PostMapping("/manager/create")
+    public ResponseEntity<GestionResponse> createMannager(@Valid @RequestBody GestionnerRequest request){
+        GestionResponse response = adminService.CreateManager(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+//    @PreAuthorize("hasRole('ADMIN') and hasAuthority('DELETE') ")
+//    @DeleteMapping("/manager/delete/{id}")
+//    public ResponseEntity<?> deleteManager(@PathVariable String id) {
+//        adminService.deleteteManager(id);
+//        return ResponseEntity.ok("Manager deleted successfully");
+//    }
 }
