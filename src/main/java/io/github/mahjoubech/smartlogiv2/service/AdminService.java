@@ -17,5 +17,7 @@ public interface AdminService {
   RolesResponse createRoles(RolesEntityRequest request);
   void deleteRoles(String id);
   AssignResponse assignPermissionToRole(AssignRequest request);
-    Page<PermissionResponseDetail> getAllPermissions(Pageable pageable);
+  Page<PermissionResponseDetail> getAllPermissions(Pageable pageable);
+  Page<RolesResponse> getAllRoles(Pageable pageable);
+
 }

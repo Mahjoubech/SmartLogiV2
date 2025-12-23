@@ -23,7 +23,7 @@ public class RegisterRequest {
     @NotNull(message = "La confirmation du mot de passe est obligatoire.")
     private String confirmPassword;
     @NotNull(message = "Le rôle est obligatoire.")
-    private Roles role;
+    private String role;
 
     private String adresse;
     private String vehicule;

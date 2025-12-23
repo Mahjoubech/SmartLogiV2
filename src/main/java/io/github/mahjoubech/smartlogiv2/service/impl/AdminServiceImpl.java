@@ -40,6 +40,7 @@ public class AdminServiceImpl implements AdminService {
         if(permission.isPresent()){
             throw new ConflictStateException("Permission with name " + name + " already exists");
         }
+        request.setName(name);
         Permission permissionEntity = permissionMapper.toEntity(request);
         return permissionMapper.toResponseDetail(permissionRepository.save(permissionEntity));
 
@@ -85,4 +86,10 @@ public class AdminServiceImpl implements AdminService {
         Page<Permission> colisPage = permissionRepository.findAll(pageable);
         return colisPage.map(permissionMapper::toResponseDetail);
     }
+    @Override
+    public Page<RolesResponse> getAllRoles(Pageable pageable) {
+        Page<RolesEntity> colisPage = rolesEntityRepository.findAll(pageable);
+        return colisPage.map(rolesMapper::toResponse);
+    }
+
 }
