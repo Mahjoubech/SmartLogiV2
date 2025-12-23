@@ -1,6 +1,7 @@
 package io.github.mahjoubech.smartlogiv2.dto.response.detail;
 
 import io.github.mahjoubech.smartlogiv2.dto.response.basic.RolesResponesBasic;
+import io.github.mahjoubech.smartlogiv2.model.entity.RolesEntity;
 import lombok.Data;
 
 import java.util.Set;
@@ -11,5 +12,5 @@ public class GestionResponse {
     private String nom;
     private String prenom;
     private String telephone;
-    private RolesResponesBasic role;
+    private RolesEntity role;
 }

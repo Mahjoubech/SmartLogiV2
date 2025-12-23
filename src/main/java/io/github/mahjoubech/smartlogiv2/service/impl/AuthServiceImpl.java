@@ -67,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
         AuthResponse authResponse = userMapper.toAuthResponse(savedUser);
         RolesResponesBasic roleResponse = new RolesResponesBasic();
         roleResponse.setName(savedUser.getRole());
-        authResponse.setRole(roleResponse);
+        authResponse.setRole(savedUser.getRole());
         authResponse.setToken(jwtToken);
         return authResponse;
     }
@@ -89,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
         AuthResponse authResponse = userMapper.toAuthResponse(userOptional.get());
         RolesResponesBasic roleResponse = new RolesResponesBasic();
         roleResponse.setName(userOptional.get().getRole());
-        authResponse.setRole(roleResponse);
+        authResponse.setRole(userOptional.get().getRole());
         authResponse.setToken(jwtToken);
         return authResponse;
     }
