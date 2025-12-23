@@ -114,4 +114,15 @@ public class AdminServiceImpl implements AdminService {
         return gestionnerMapper.toResponse(gestionnerRepository.save(gestionner));
     }
 
+    @Override
+    public void deleteManager(String id) {
+        gestionnerRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<GestionResponse> getAllGestionners(Pageable pageable) {
+        Page<Gestionner> gestionnerPage = gestionnerRepository.findAll(pageable);
+        return gestionnerPage.map(gestionnerMapper::toResponse);
+    }
+
 }

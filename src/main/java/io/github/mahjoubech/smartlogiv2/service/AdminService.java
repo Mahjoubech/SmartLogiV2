@@ -22,5 +22,7 @@ public interface AdminService {
   Page<PermissionResponseDetail> getAllPermissions(Pageable pageable);
   Page<RolesResponse> getAllRoles(Pageable pageable);
   GestionResponse CreateManager(GestionnerRequest request);
+  void deleteManager(String id);
+  Page<GestionResponse> getAllGestionners(Pageable pageable);
 
 }

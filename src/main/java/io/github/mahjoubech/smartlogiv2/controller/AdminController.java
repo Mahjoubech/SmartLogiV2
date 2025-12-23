@@ -73,10 +73,21 @@ public class AdminController {
         GestionResponse response = adminService.CreateManager(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-//    @PreAuthorize("hasRole('ADMIN') and hasAuthority('DELETE') ")
-//    @DeleteMapping("/manager/delete/{id}")
-//    public ResponseEntity<?> deleteManager(@PathVariable String id) {
-//        adminService.deleteteManager(id);
-//        return ResponseEntity.ok("Manager deleted successfully");
-//    }
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('DELETE') ")
+    @DeleteMapping("/manager/delete/{id}")
+    public ResponseEntity<?> deleteManager(@PathVariable String id) {
+        adminService.deleteManager(id);
+        return ResponseEntity.ok("Manager deleted successfully");
+    }
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('VIEW')")
+    @GetMapping("/manager/all")
+    public ResponseEntity<Page<GestionResponse>> getAllManagers(@RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size,
+                                                          @RequestParam(defaultValue = "dateCreation") String sortBy,
+                                                          @RequestParam(defaultValue = "desc") String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page , size, sort);
+        Page<GestionResponse> permissionPages = adminService.getAllGestionners(pageable);
+        return ResponseEntity.ok().body(permissionPages);
+}
 }
