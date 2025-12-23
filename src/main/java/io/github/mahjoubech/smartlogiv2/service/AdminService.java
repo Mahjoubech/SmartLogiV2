@@ -1,10 +1,12 @@
 package io.github.mahjoubech.smartlogiv2.service;
 
 import io.github.mahjoubech.smartlogiv2.dto.request.AssignRequest;
+import io.github.mahjoubech.smartlogiv2.dto.request.GestionnerRequest;
 import io.github.mahjoubech.smartlogiv2.dto.request.PermissionRequest;
 import io.github.mahjoubech.smartlogiv2.dto.request.RolesEntityRequest;
 import io.github.mahjoubech.smartlogiv2.dto.response.basic.ColisResponseBasic;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.AssignResponse;
+import io.github.mahjoubech.smartlogiv2.dto.response.detail.GestionResponse;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.PermissionResponseDetail;
 import io.github.mahjoubech.smartlogiv2.dto.response.detail.RolesResponse;
 import io.github.mahjoubech.smartlogiv2.model.entity.RolesEntity;
@@ -17,5 +19,10 @@ public interface AdminService {
   RolesResponse createRoles(RolesEntityRequest request);
   void deleteRoles(String id);
   AssignResponse assignPermissionToRole(AssignRequest request);
-    Page<PermissionResponseDetail> getAllPermissions(Pageable pageable);
+  Page<PermissionResponseDetail> getAllPermissions(Pageable pageable);
+  Page<RolesResponse> getAllRoles(Pageable pageable);
+  GestionResponse CreateManager(GestionnerRequest request);
+  void deleteManager(String id);
+  Page<GestionResponse> getAllGestionners(Pageable pageable);
+
 }

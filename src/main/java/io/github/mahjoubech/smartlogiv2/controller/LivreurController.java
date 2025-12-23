@@ -34,7 +34,7 @@ public class LivreurController {
                     @ApiResponse(responseCode = "201", description = "Livreur créé avec succès"),
                     @ApiResponse(responseCode = "400", description = "Erreur de validation des champs")
             })
-    @PreAuthorize("hasAnyAuthority('MANAGER_CREATE')")
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('CREATE')")
     @PostMapping
     public ResponseEntity<LivreurResponse> createLivreur(@Valid @RequestBody LivreurRequest livreurRequest){
         LivreurResponse livreurResponse= livreurService.createLivreur(livreurRequest);

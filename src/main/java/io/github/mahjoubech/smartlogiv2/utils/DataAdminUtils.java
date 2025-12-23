@@ -45,5 +45,6 @@ public class DataAdminUtils implements CommandLineRunner {
 
             log.info(" Admin created: admin@smartlogi.com / admin123");
         }
+
     }
 

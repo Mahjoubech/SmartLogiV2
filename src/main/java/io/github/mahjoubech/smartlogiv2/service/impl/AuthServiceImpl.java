@@ -41,6 +41,7 @@ public class AuthServiceImpl implements AuthService {
     private  final ZoneRepository zoneRepository;
     private  final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final RolesEntityRepository rolesEntityRepository;
 
     @Override
     @Transactional
@@ -49,38 +50,24 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new ConflictStateException("User already exists");
         }
-
+        Optional<RolesEntity> rolesEntity = rolesEntityRepository.findByName(Roles.CLIENT);
+        if (rolesEntity.isEmpty()) {
+            throw new ResourceNotFoundException("Role not found");
+        }
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new ValidationException("Passwords don't match");
         }
 
-        User savedUser;
-
-        if(request.getRole().equals(Roles.CLIENT)){
+        User savedUser = new User();
             ClientExpediteur user = clientDestinataireMapper.toClientExpediteur(request);
             user.setPassword(passwordEncoder.encode(request.getPassword()));
-            savedUser = clientExpediteurRepository.save(user); // save f ClientExpediteur repo
-        } else if (request.getRole().equals(Roles.MANAGER)) {
-            Gestionner gestionner = gestionnerMapper.toGestionner(request);
-            gestionner.setPassword(passwordEncoder.encode(request.getPassword()));
-            savedUser = gestionnerRepository.save(gestionner); // save f Gestionner repo
-        } else if(request.getRole().equals(Roles.LIVREUR)) {
-            Livreur livreur = livreurMapper.toLivreur(request);
-            if (request.getZoneAssigned() != null) {
-                Zone zone = zoneRepository.findById(request.getZoneAssigned())
-                        .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
-                livreur.setZoneAssigned(zone);
-            }
-            livreur.setPassword(passwordEncoder.encode(request.getPassword()));
-            savedUser = livreurRepository.save(livreur);
-        } else {
-            throw new ValidationException("Role not supported");
-        }
+            user.setRole(rolesEntity.get());
+            savedUser = clientExpediteurRepository.save(user);
       var jwtToken = jwtService.generateToken(savedUser);
         AuthResponse authResponse = userMapper.toAuthResponse(savedUser);
         RolesResponesBasic roleResponse = new RolesResponesBasic();
-        roleResponse.setName(savedUser.getRole().getName());
-        authResponse.setRole(roleResponse);
+        roleResponse.setName(savedUser.getRole());
+        authResponse.setRole(savedUser.getRole());
         authResponse.setToken(jwtToken);
         return authResponse;
     }
@@ -101,8 +88,8 @@ public class AuthServiceImpl implements AuthService {
         var jwtToken = jwtService.generateToken(userOptional.get());
         AuthResponse authResponse = userMapper.toAuthResponse(userOptional.get());
         RolesResponesBasic roleResponse = new RolesResponesBasic();
-        roleResponse.setName(userOptional.get().getRole().getName());
-        authResponse.setRole(roleResponse);
+        roleResponse.setName(userOptional.get().getRole());
+        authResponse.setRole(userOptional.get().getRole());
         authResponse.setToken(jwtToken);
         return authResponse;
     }

@@ -16,6 +16,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ClientDestinataireMapper {
+    @Mapping(target = "role", ignore = true)
     ClientExpediteur toClientExpediteur(RegisterRequest expediteur);
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "colis", ignore = true)

@@ -16,6 +16,7 @@ public interface LivreurMapper {
     @Mapping(target = "zoneAssigned", ignore = true)
     Livreur toEntity(LivreurRequest dto);
     @Mapping(target = "zoneAssigned", ignore = true)
+    @Mapping(target = "role", ignore = true)
     Livreur toLivreur(RegisterRequest livreur);
     @Mapping(target = "zoneAssignee", source = "zoneAssigned")
     LivreurResponse toResponse(Livreur entity);

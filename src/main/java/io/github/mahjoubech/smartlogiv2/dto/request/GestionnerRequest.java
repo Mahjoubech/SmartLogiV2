@@ -1,13 +1,11 @@
 package io.github.mahjoubech.smartlogiv2.dto.request;
 
-import io.github.mahjoubech.smartlogiv2.model.enums.Roles;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class RegisterRequest {
+public class GestionnerRequest {
     @NotNull(message = "Le nom est obligatoire.")
     private String nom;
     @NotNull(message = "Le Prenom est obligatoire.")
@@ -20,8 +18,4 @@ public class RegisterRequest {
     private String password;
     @NotNull(message = "La confirmation du mot de passe est obligatoire.")
     private String confirmPassword;
-    private String adresse;
-    private String vehicule;
-    private String zoneAssigned;
-
 }
