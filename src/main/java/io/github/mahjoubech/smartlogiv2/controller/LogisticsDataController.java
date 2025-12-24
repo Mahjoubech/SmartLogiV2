@@ -34,6 +34,7 @@ public class LogisticsDataController {
     @Operation(summary = "Créer une nouvelle zone de distribution",
             description = "Ajoute une zone de distribution pour la planification des tournées.",
             responses = {@ApiResponse(responseCode = "201", description = "Zone créée")})
+    @PreAuthorize("hasAnyRole('MANAGER') and hasAuthority('CREATE')")
     @PostMapping("/zone")
     public ResponseEntity<ZoneResponse> createZone(@Valid @RequestBody ZoneRequest request){
         ZoneResponse zoneResponse= logisticsDataService.createZone(request);
@@ -46,7 +47,7 @@ public class LogisticsDataController {
                     @ApiResponse(responseCode = "200", description = "Mise à jour réussie"),
                     @ApiResponse(responseCode = "404", description = "Zone non trouvée")
             })
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('UPDATE')")
     @PutMapping("/zone/{zoneId}")
     public ResponseEntity<ZoneResponse> updateZone(
             @Parameter(description = "ID de la zone à mettre à jour") @PathVariable String zoneId,
@@ -62,6 +63,7 @@ public class LogisticsDataController {
                     @ApiResponse(responseCode = "404", description = "Zone non trouvée"),
                     @ApiResponse(responseCode = "409", description = "Conflit: Zone encore liée")
             })
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('DELETE')")
     @DeleteMapping("/zone/{zoneId}")
     public ResponseEntity<String> deleteZone(@PathVariable String zoneId){
         logisticsDataService.deleteZone(zoneId);
@@ -69,6 +71,7 @@ public class LogisticsDataController {
     }
 
     @Operation(summary = "Consulter les détails d'une zone par ID")
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('VIEW')")
     @GetMapping("/zone/{zoneId}")
     public  ResponseEntity<ZoneResponse> getZone(@PathVariable String zoneId){
         ZoneResponse zoneResponse= logisticsDataService.getZoneById(zoneId);
@@ -77,6 +80,7 @@ public class LogisticsDataController {
 
     @Operation(summary = "Afficher toutes les zones",
             description = "Retourne la liste paginée de toutes les zones de distribution.")
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('VIEW')")
     @GetMapping("/zone")
     public ResponseEntity<Page<ZoneResponse>> getAllZones(Pageable pageable){
         Page<ZoneResponse> zoneResponses= logisticsDataService.getAllZones(pageable);
@@ -86,6 +90,7 @@ public class LogisticsDataController {
     @Operation(summary = "Créer un produit pour le catalogue",
             description = "Ajoute un nouveau produit au catalogue général de SmartLogi.",
             responses = {@ApiResponse(responseCode = "201", description = "Produit créé")})
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('CREATE')")
     @PostMapping("/produit")
     public ResponseEntity<ProduitResponse> createProduit(@Valid @RequestBody ProduitRequest request) {
         ProduitResponse response = logisticsDataService.createProduit(request);
@@ -93,6 +98,7 @@ public class LogisticsDataController {
     }
 
     @Operation(summary = "Consulter un produit par ID")
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('VIEW')")
     @GetMapping("/produit/{produitId}")
     public ResponseEntity<ProduitResponse> getProduitById(@PathVariable String produitId) {
         ProduitResponse response = logisticsDataService.getProduitById(produitId);
@@ -100,6 +106,7 @@ public class LogisticsDataController {
     }
 
     @Operation(summary = "Afficher le catalogue complet des produits")
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('VIEW')")
     @GetMapping("/produit")
     public ResponseEntity<Page<ProduitResponse>> findAllProduits(Pageable pageable) {
         Page<ProduitResponse> responsePage = logisticsDataService.findAllProduits(pageable);
@@ -108,6 +115,7 @@ public class LogisticsDataController {
 
     @Operation(summary = "Mettre à jour un produit existant",
             description = "Corrige le prix, le poids ou la catégorie d'un produit.")
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('UPDATE')")
     @PutMapping("/produit/{produitId}")
     public ResponseEntity<ProduitResponse> updateProduit(
             @PathVariable String produitId,
@@ -119,6 +127,7 @@ public class LogisticsDataController {
     @Operation(summary = "Supprimer un produit du catalogue",
             description = "Supprime un produit. Bloqué si le produit est lié à un colis existant.",
             responses = {@ApiResponse(responseCode = "204", description = "Produit supprimé")})
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('DELETE')")
     @DeleteMapping("/produit{produitId}")
     public ResponseEntity<Void> deleteProduit(@PathVariable String produitId) {
         logisticsDataService.deleteProduit(produitId);
@@ -127,6 +136,7 @@ public class LogisticsDataController {
 
     @Operation(summary = "Nettoyage des produits dupliqués",
             description = "Tâche d'administration: Supprime les produits qui partagent le même nom mais ont des ID différents (corrige les problèmes de base de données).")
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('DELETE')")
     @PostMapping("/produit/cleanup/duplicates")
     public ResponseEntity<String> deleteDuplicateProducts() {
         logisticsDataService.deleteDuplicateProducts();
@@ -135,6 +145,7 @@ public class LogisticsDataController {
 
     @Operation(summary = "Rapport de synthèse des colis par statut ou zone",
             description = "Opération Gestionnaire: Calcule le nombre total de colis regroupés par le champ spécifié (statut ou zoneId).")
+    @PreAuthorize("hasAuthority('MANAGER') and hasAuthority('VIEW')")
     @GetMapping("/colis/summary")
     public ResponseEntity<Map<String, Long>> getColisSummary(
             @Parameter(description = "Champ de regroupement: 'statut' ou 'zone'") @RequestParam String groupByField) {
@@ -145,6 +156,7 @@ public class LogisticsDataController {
     @Operation(summary = "Rapport détaillé du poids et du nombre de colis par livreur ou zone",
             description = "Opération Gestionnaire: Calcule le poids total (SUM) et le nombre total (COUNT) des colis regroupés par Livreur ou par Zone.",
             responses = {@ApiResponse(responseCode = "200", description = "Liste des totaux par groupe")})
+    @PreAuthorize("hasAuthority('MANAGER') and hasAuthority('VIEW')")
     @GetMapping("/detailed-summary")
     public ResponseEntity<List<Map<String, Object>>> getDetailedColisSummary(
             @Parameter(description = "Champ de regroupement: 'livreur' ou 'zone'") @RequestParam String groupByField) {

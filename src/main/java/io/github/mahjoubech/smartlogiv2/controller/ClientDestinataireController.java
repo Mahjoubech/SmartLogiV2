@@ -28,26 +28,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Tag(name = "Clients et Destinataires", description = "Gestion des utilisateurs (Expéditeurs, Destinataires) pour la logistique.")
 public class ClientDestinataireController {
     private final ClientDestinataireService clientDestinataireService;
-
-    @Operation(summary = "Enregistrer un nouveau client expéditeur",
-            description = "Crée un nouvel expéditeur. Utilisé par le gestionnaire pour enregistrer un client source de colis.",
-            responses = {
-                    @ApiResponse(responseCode = "201", description = "Expéditeur créé avec succès"),
-                    @ApiResponse(responseCode = "409", description = "Conflit: Email déjà utilisé"),
-                    @ApiResponse(responseCode = "400", description = "Erreur de validation des champs")
-            })
-    @PostMapping("/register/expediteur")
-    public ResponseEntity<ClientDestinataireResponse> createExpediteur(@Valid @RequestBody ClientDestinataireRequest request) {
-        ClientDestinataireResponse response = clientDestinataireService.createExpediteur(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
     @Operation(summary = "Enregistrer un nouveau destinataire",
             description = "Crée un nouveau destinataire. Utilisé par le gestionnaire.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Destinataire créé avec succès"),
                     @ApiResponse(responseCode = "409", description = "Conflit: Email déjà utilisé")
             })
+    @PreAuthorize("hasRole('CLIENT') and hasAuthority('CREATE')")
     @PostMapping("/register/destinataire")
     public ResponseEntity<ClientDestinataireResponse> createDestinataire(@Valid @RequestBody ClientDestinataireRequest request) {
         ClientDestinataireResponse response = clientDestinataireService.createDestinataire(request);
@@ -60,6 +47,7 @@ public class ClientDestinataireController {
                     @ApiResponse(responseCode = "200", description = "Détails de l'utilisateur trouvés"),
                     @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
             })
+    @PreAuthorize("hasAnyRole('CLIENT' , 'MANAGER') and hasAuthority('VIEW')")
     @GetMapping("/{clientId}")
     public ResponseEntity<ClientDestinataireResponse> getColisById(@PathVariable String clientId) {
         ClientDestinataireResponse response = clientDestinataireService.getClientById(clientId);
@@ -72,6 +60,7 @@ public class ClientDestinataireController {
                     @ApiResponse(responseCode = "200", description = "Mise à jour réussie"),
                     @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
             })
+    @PreAuthorize("hasAnyRole('CLIENT' , 'MANAGER')and hasAuthority('UPDATE')")
     @PutMapping("/{clientId}")
     public ResponseEntity<ClientDestinataireResponse> updateClient(
             @PathVariable String clientId,
@@ -87,6 +76,7 @@ public class ClientDestinataireController {
                     @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé"),
                     @ApiResponse(responseCode = "409", description = "Conflit: Lié à des colis existants")
             })
+    @PreAuthorize("hasAnyRole('MANAGER') and hasAuthority('DELETE')")
     @DeleteMapping("/{clientId}")
     public ResponseEntity<String> deleteClient(@PathVariable String clientId) {
         clientDestinataireService.deleteClient(clientId);
@@ -97,6 +87,7 @@ public class ClientDestinataireController {
     @Operation(summary = "Afficher la liste paginée de tous les clients et destinataires",
             description = "Utilisé par le gestionnaire pour visualiser toute la base clients avec pagination et tri.",
             responses = {@ApiResponse(responseCode = "200", description = "Liste paginée des utilisateurs retournée")})
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('VIEW')")
     @GetMapping
     public ResponseEntity<Page<ClientDestinataireResponse>> getAllClients(
             @RequestParam(defaultValue = "0") int page,
@@ -112,6 +103,7 @@ public class ClientDestinataireController {
     @Operation(summary = "Rechercher des clients ou destinataires par mot-clé",
             description = "Permet de rechercher des utilisateurs par Nom, Email, ou Téléphone (recherche unifiée).",
             responses = {@ApiResponse(responseCode = "200", description = "Résultats de la recherche paginés")})
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('VIEW')")
     @GetMapping("/search")
     public ResponseEntity<Page<ClientDestinataireResponse>> searchClients(
             @RequestParam String keyword,
