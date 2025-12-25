@@ -1,6 +1,7 @@
 package io.github.mahjoubech.smartlogiv2.model.entity;
 
 
+import io.github.mahjoubech.smartlogiv2.model.enums.AuthProvider;
 import io.github.mahjoubech.smartlogiv2.model.enums.Roles;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,6 +38,14 @@ public  class User extends BaseEntity implements UserDetails {
         @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn(name = "role_id")
         private RolesEntity role;
+        @Enumerated(EnumType.STRING)
+        private AuthProvider provider;
+        @Column(name = "provider_id")
+        private String providerId;
+        @Column(name = "enabled")
+        @Builder.Default
+        private boolean enabled = true;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();

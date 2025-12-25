@@ -1,0 +1,25 @@
+databaseChangeLog:
+ - changeSet:
+     id: 20251225-01-add-oauth2-fields
+     author: Mahjoubech
+     changes:
+       - addColumn:
+           tableName: "users"
+           columns:
+             - column:
+                 name: "provider"
+                 type: "varchar(50)"
+                 defaultValue: "LOCAL"
+             - column:
+                 name: "provider_id"
+                 type: "varchar(255)"
+                 defaultValue: null
+             - column:
+                 name: "enabled"
+                 type: "boolean"
+                 defaultValueBoolean: true
+       - modifyDataType:
+           tableName: "users"
+           columnName: "password"
+           newDataType: "varchar(255)"
+           remarks: "nullable pour OAuth2"
