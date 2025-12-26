@@ -30,17 +30,33 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2AuthenticationToken  token = (OAuth2AuthenticationToken) authentication;
+        String provider = token.getAuthorizedClientRegistrationId();
         OAuth2User oAuthUser = token.getPrincipal();
-        String email =  oAuthUser.getAttribute("email");
-        String firstName = oAuthUser.getAttribute("given_name");
-        String lastName = oAuthUser.getAttribute("family_name");
-        String providerId = oAuthUser.getAttribute("sub");
-        User user = userRepository.findByEmail(email)
+        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(provider, oAuthUser.getAttributes());
+        String username = (String) oAuthUser.getAttributes().get("name");
+        final String fistname ;
+        final String lastname ;
+        switch(provider.toLowerCase()) {
+            case "google":
+                       fistname = userInfo.getFirstName();
+                       lastname = userInfo.getLastName();
+                       break;
+            case "facebook":
+                       String[] parts = username.split(" ");
+                       fistname = parts[0];
+                       lastname = parts[parts.length - 1];
+                       break;
+            default:
+                fistname = username;
+                lastname = username;
+
+        }
+        User user = userRepository.findByEmail(userInfo.getEmail())
                 .orElseGet(()->{
                     User u =  new User();
-                    u.setEmail(email);
-                    u.setNom(lastName);
-                    u.setPrenom(firstName);
+                    u.setEmail(userInfo.getEmail());
+                    u.setNom(lastname);
+                    u.setPrenom(fistname);
                     u.setTelephone(null);
                     u.setPassword("azerty");
                     RolesEntity rolesEntity = rolesEntityRepository.findByName(Roles.CLIENT)
@@ -48,8 +64,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                     u.setRole(rolesEntity);
                     return  u;
                 });
-        user.setProvider(AuthProvider.GOOGLE);
-        user.setProviderId(providerId);
+        user.setProvider(AuthProvider.valueOf(provider.toUpperCase()));
+        user.setProviderId(userInfo.getProviderId());
         userRepository.save(user);
         var jwt = jwtService.generateToken(user);
         response.setContentType("application/json;charset=UTF-8");
