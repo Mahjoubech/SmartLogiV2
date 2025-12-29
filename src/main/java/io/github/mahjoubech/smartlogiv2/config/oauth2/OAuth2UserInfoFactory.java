@@ -7,6 +7,8 @@ public class OAuth2UserInfoFactory {
       return switch(registrationId.toLowerCase()){
           case "google" -> new GoogleOAuth2UserInfo(attributes);
           case "facebook" -> new FacebookOAuth2UserInfo(attributes);
+          case "github" -> new GithubOAuth2UserInfo(attributes);
+          case "okta" -> new OktaOAuth2UserInfo(attributes);
           default -> throw new IllegalArgumentException("Unsupported provider");
       };
     }

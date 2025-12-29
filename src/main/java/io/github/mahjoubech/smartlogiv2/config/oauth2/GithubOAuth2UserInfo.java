@@ -2,15 +2,16 @@ package io.github.mahjoubech.smartlogiv2.config.oauth2;
 
 import java.util.Map;
 
-public class FacebookOAuth2UserInfo implements OAuth2UserInfo {
+public class GithubOAuth2UserInfo implements OAuth2UserInfo {
 
-    private final Map<String,Object> attributes;
-    public FacebookOAuth2UserInfo(Map<String, Object> attributes) {
+    private final Map<String, Object> attributes;
+    public GithubOAuth2UserInfo(Map<String, Object> attributes) {
         this.attributes = attributes;
     }
     @Override
     public String getProviderId() {
-        return (String)  attributes.get("id");
+        Object id = attributes.get("id");
+        return id != null ? id.toString() : null;
     }
 
     @Override
@@ -25,6 +26,6 @@ public class FacebookOAuth2UserInfo implements OAuth2UserInfo {
 
     @Override
     public String getEmail() {
-        return (String)   attributes.get("email");
+        return (String)  attributes.get("email");
     }
 }

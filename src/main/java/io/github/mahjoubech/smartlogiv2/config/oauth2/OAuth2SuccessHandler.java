@@ -46,6 +46,28 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                        fistname = parts[0];
                        lastname = parts[parts.length - 1];
                        break;
+            case "github":
+                       String[] prt = username.split(" ");
+                       fistname = prt[0];
+                       lastname = prt[prt.length - 1];
+                       break;
+            case "okta":
+                    if("google".equals(oAuthUser.getAttributes().get("sub"))){
+                        fistname = userInfo.getFirstName();
+                        lastname = userInfo.getLastName();
+                        break;
+                    }else if("facebook".equals(oAuthUser.getAttributes().get("sub"))){
+                        String[] prts = username.split(" ");
+                        fistname = prts[0];
+                        lastname = prts[prts.length - 1];
+                        break;
+                    } else if ("github".equals(oAuthUser.getAttributes().get("sub"))) {
+                        String[] prt2 = username.split(" ");
+                        fistname = prt2[0];
+                        lastname = prt2[prt2.length - 1];
+                        break;
+                    }
+
             default:
                 fistname = username;
                 lastname = username;
