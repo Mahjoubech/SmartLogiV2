@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.UUID;
 
+
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
@@ -52,16 +53,17 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                        lastname = prt[prt.length - 1];
                        break;
             case "okta":
-                    if("google".equals(oAuthUser.getAttributes().get("sub"))){
+                    String sub = (String)oAuthUser.getAttributes().get("sub");
+                    if(sub.contains("google")){
                         fistname = userInfo.getFirstName();
                         lastname = userInfo.getLastName();
                         break;
-                    }else if("facebook".equals(oAuthUser.getAttributes().get("sub"))){
+                    }else if(sub.contains("facebook")){
                         String[] prts = username.split(" ");
                         fistname = prts[0];
                         lastname = prts[prts.length - 1];
                         break;
-                    } else if ("github".equals(oAuthUser.getAttributes().get("sub"))) {
+                    } else if (sub.contains("github")) {
                         String[] prt2 = username.split(" ");
                         fistname = prt2[0];
                         lastname = prt2[prt2.length - 1];

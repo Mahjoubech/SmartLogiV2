@@ -3,46 +3,46 @@ databaseChangeLog:
         id: 20251221-06-insert-permissions-roles
         author: Mahjoubech
         changes:
-        - insert:
-            tableName: roles
-            columns:
-              - column: { name: id, valueComputed: "gen_random_uuid()" }
-              - column: { name: name, value: "ADMIN" }
-              - column: { name: date_creation, valueDate: "2024-10-31T10:00:00" }
-              - column: { name: date_modification, valueDate: "2024-10-31T10:00:00" }
-              - column: { name: created_by, value: "system" }
-              - column: { name: modified_by, value: "system" }
-
-        - insert:
-            tableName: users
-            columns:
-              - column:
-                  name: id
-                  valueComputed: "gen_random_uuid()"
-              - column:
-                  name: nom
-                  value: "Admin"
-              - column:
-                  name: prenom
-                  value: "System"
-              - column:
-                  name: email
-                  value: "admin1@gmail.com"
-              - column:
-                  name: telephone
-                  value: "0600000001"
-              - column:
-                  name: password
-                  value: "$2a$12$9R4PwnPGueZcXY.O/R4wKeIMhynAKecttZv/LBYAgiPMBoAfEaRPW" # bcrypt
-              - column:
-                  name: date_creation
-                  valueComputed: CURRENT_TIMESTAMP
-              - column:
-                  name: role_id
-                  valueComputed: "(select id from roles where name='ADMIN')"
-              - column:
-                  name: created_by
-                  value: "SYSTEM"
+#        - insert:
+#            tableName: roles
+#            columns:
+#              - column: { name: id, valueComputed: "gen_random_uuid()" }
+#              - column: { name: name, value: "ADMIN" }
+#              - column: { name: date_creation, valueDate: "2024-10-31T10:00:00" }
+#              - column: { name: date_modification, valueDate: "2024-10-31T10:00:00" }
+#              - column: { name: created_by, value: "system" }
+#              - column: { name: modified_by, value: "system" }
+#
+#        - insert:
+#            tableName: users
+#            columns:
+#              - column:
+#                  name: id
+#                  valueComputed: "gen_random_uuid()"
+#              - column:
+#                  name: nom
+#                  value: "Admin"
+#              - column:
+#                  name: prenom
+#                  value: "System"
+#              - column:
+#                  name: email
+#                  value: "admin1@gmail.com"
+#              - column:
+#                  name: telephone
+#                  value: "0600000001"
+#              - column:
+#                  name: password
+#                  value: "$2a$12$9R4PwnPGueZcXY.O/R4wKeIMhynAKecttZv/LBYAgiPMBoAfEaRPW" # bcrypt
+#              - column:
+#                  name: date_creation
+#                  valueComputed: CURRENT_TIMESTAMP
+#              - column:
+#                  name: role_id
+#                  valueComputed: "(select id from roles where name='ADMIN')"
+#              - column:
+#                  name: created_by
+#                  value: "SYSTEM"
         - insert:
                tableName: permissions
                columns:
