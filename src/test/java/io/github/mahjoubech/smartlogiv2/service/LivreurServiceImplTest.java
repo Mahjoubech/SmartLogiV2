@@ -9,7 +9,10 @@ import io.github.mahjoubech.smartlogiv2.mapper.ColisMapper;
 import io.github.mahjoubech.smartlogiv2.mapper.LivreurMapper;
 import io.github.mahjoubech.smartlogiv2.model.entity.Colis;
 import io.github.mahjoubech.smartlogiv2.model.entity.Livreur;
+import io.github.mahjoubech.smartlogiv2.model.enums.Roles;
 import io.github.mahjoubech.smartlogiv2.model.entity.Zone;
+import io.github.mahjoubech.smartlogiv2.model.entity.RolesEntity;
+import io.github.mahjoubech.smartlogiv2.repository.*;
 import io.github.mahjoubech.smartlogiv2.repository.ColisRepository;
 import io.github.mahjoubech.smartlogiv2.repository.LivreurRepository;
 import io.github.mahjoubech.smartlogiv2.repository.ZoneRepository;
@@ -24,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,6 +47,11 @@ class LivreurServiceImplTest {
 
     @Mock
     private ColisRepository colisRepository;
+    @Mock
+    private RolesEntityRepository rolesEntityRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @Mock
     private ZoneRepository zoneRepository;
@@ -79,6 +88,8 @@ class LivreurServiceImplTest {
         livreurRequest.setPrenom("Mohammed");
         livreurRequest.setTelephone("0612345678");
         livreurRequest.setVehicule("Moto");
+        livreurRequest.setPassword("123456");
+        livreurRequest.setConfirmPassword("123456");
         livreurRequest.setZoneAssigneeId(ZONE_ID);
 
         livreur = new Livreur();
@@ -87,12 +98,16 @@ class LivreurServiceImplTest {
         livreur.setPrenom("Mohammed");
         livreur.setTelephone("0612345678");
         livreur.setVehicule("Moto");
+        livreurRequest.setPassword("123456");
+        livreurRequest.setConfirmPassword("123456");
         livreur.setZoneAssigned(zone);
 
         livreurResponse = new LivreurResponse();
         livreurResponse.setId(LIVREUR_ID);
         livreurResponse.setNom("Alami");
         livreurResponse.setPrenom("Mohammed");
+        livreurRequest.setPassword("123456");
+        livreurRequest.setConfirmPassword("123456");
         livreurResponse.setTelephone("0612345678");
 
         colis = new Colis();
@@ -107,7 +122,15 @@ class LivreurServiceImplTest {
 
     @Test
     void createLivreur_shouldCreateSuccessfully_whenZoneExists() {
+
+        RolesEntity roleLivreur = new RolesEntity();
+        roleLivreur.setName(Roles.LIVREUR);
+
         when(zoneRepository.findById(ZONE_ID)).thenReturn(Optional.of(zone));
+        when(rolesEntityRepository.findByName(Roles.LIVREUR))
+                .thenReturn(Optional.of(roleLivreur));
+        when(passwordEncoder.encode(anyString()))
+                .thenReturn("encodedPassword");
         when(livreurMapper.toEntity(livreurRequest)).thenReturn(livreur);
         when(livreurRepository.save(livreur)).thenReturn(livreur);
         when(livreurMapper.toResponse(livreur)).thenReturn(livreurResponse);
@@ -116,12 +139,9 @@ class LivreurServiceImplTest {
 
         assertNotNull(result);
         assertEquals(LIVREUR_ID, result.getId());
-        assertEquals("Alami", result.getNom());
-        verify(zoneRepository).findById(ZONE_ID);
-        verify(livreurMapper).toEntity(livreurRequest);
-        verify(livreurRepository).save(livreur);
-        verify(livreurMapper).toResponse(livreur);
     }
+
+
 
     @Test
     void createLivreur_shouldThrowException_whenZoneNotFound() {

@@ -244,9 +244,14 @@ public ColisResponse updateColis(String colisId, ColisRequest request) {
             }
         }
 
-        if (colis.getProduits() != null) {
+        if (colis.getProduits() == null) {
+            colis.setProduits(new ArrayList<>());
+        } else {
             colis.getProduits().clear();
         }
+
+        colis.getProduits().addAll(produitsUpdated);
+
 
         colis.getProduits().addAll(produitsUpdated);
 

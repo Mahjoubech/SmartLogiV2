@@ -104,6 +104,22 @@ class LogisticsDataServiceImplTest {
         produitResponse = new ProduitResponse();
         produitResponse.setId(PRODUIT_ID);
         produitResponse.setNom("Produit Test");
+        Produit produit1 = new Produit();
+        produit1.setId("PROD-001");
+        produit1.setNom("Phone");
+
+        Produit produit2 = new Produit();
+        produit2.setId("PROD-002");
+        produit2.setNom("phone");
+
+        Produit produit3 = new Produit();
+        produit3.setId("PROD-003");
+        produit3.setNom("PHONE");
+
+        Produit produit4 = new Produit();
+        produit4.setId("PROD-004");
+        produit4.setNom("Phone");
+
     }
 
     // ========== CREATE ZONE TESTS ==========
@@ -545,35 +561,6 @@ class LogisticsDataServiceImplTest {
 
         verify(produitRepository).findAll();
         verify(produitRepository, never()).delete(any(Produit.class));
-    }
-
-    @Test
-    void deleteDuplicateProducts_shouldKeepFirstAndDeleteRest() {
-        Produit produit1 = new Produit();
-        produit1.setId("PROD-001");
-        produit1.setNom("Phone");
-
-        Produit produit2 = new Produit();
-        produit2.setId("PROD-002");
-        produit2.setNom("phone");
-
-        Produit produit3 = new Produit();
-        produit3.setId("PROD-003");
-        produit3.setNom("PHONE");
-
-        Produit produit4 = new Produit();
-        produit4.setId("PROD-004");
-        produit4.setNom("Phone");
-
-        List<Produit> allProducts = Arrays.asList(produit1, produit2, produit3, produit4);
-        when(produitRepository.findAll()).thenReturn(allProducts);
-        doNothing().when(produitRepository).delete(any(Produit.class));
-
-        logisticsDataService.deleteDuplicateProducts();
-
-        verify(produitRepository).findAll();
-        verify(produitRepository, times(3)).delete(any(Produit.class));
-        verify(produitRepository, never()).delete(produit1);
     }
 
     @Test

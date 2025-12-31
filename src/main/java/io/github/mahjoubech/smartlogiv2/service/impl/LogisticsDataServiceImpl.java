@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -151,17 +148,22 @@ public class LogisticsDataServiceImpl implements LogisticsDataService {
     @Transactional
     public void deleteDuplicateProducts() {
         List<Produit> allProducts = produitRepository.findAll();
+
         Map<String, List<Produit>> groupedByName = allProducts.stream()
                 .collect(Collectors.groupingBy(p -> p.getNom().toLowerCase()));
 
         for (List<Produit> duplicates : groupedByName.values()) {
             if (duplicates.size() > 1) {
+
+                duplicates.sort(Comparator.comparing(Produit::getId));
+
                 Produit keepProduct = duplicates.get(0);
+
                 for (int i = 1; i < duplicates.size(); i++) {
-                    Produit duplicate = duplicates.get(i);
-                    produitRepository.delete(duplicate);
+                    produitRepository.delete(duplicates.get(i));
                 }
             }
         }
     }
+
 }
