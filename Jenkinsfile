@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SONAR_HOST_URL = 'http://127.0.0.1:9000'
-        SONAR_TOKEN = credentials('squ_82e91e3b00f0e1a8eb1995b6b7e9efd60ef95176')
+        SONAR_TOKEN = credentials('sonar-token')
         IMAGE_NAME = 'smartlogi-app'
         COMPOSE_FILE = 'docker-compose.yml'
     }
